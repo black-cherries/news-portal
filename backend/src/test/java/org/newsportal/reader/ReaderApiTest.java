@@ -206,7 +206,11 @@ class ReaderApiTest {
 
 		rights.recordRightsDecision(src.getId(), ContentUse.FULL_TEXT_DISPLAY, permitted(null));
 		mvc.perform(get("/api/v1/articles/" + id)).andExpect(jsonPath("$.fullTextStatus").value("AVAILABLE"))
-			.andExpect(jsonPath("$.fullTextHtml").value("<p>Whole article</p>"));
+			.andExpect(jsonPath("$.fullTextHtml").value("<p>Whole article</p>"))
+			.andExpect(jsonPath("$.fullTextNarrationPermitted").value(false));
+
+		rights.recordRightsDecision(src.getId(), ContentUse.NARRATION, permitted(null));
+		mvc.perform(get("/api/v1/articles/" + id)).andExpect(jsonPath("$.fullTextNarrationPermitted").value(true));
 
 		long noBody = store(src, "Headline only", null, "en", hoursAgo(1), List.of());
 		mvc.perform(get("/api/v1/articles/" + noBody)).andExpect(jsonPath("$.fullTextStatus").value("NOT_PROVIDED"));

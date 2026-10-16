@@ -169,6 +169,9 @@ class MeApiTest {
 		mvc.perform(get("/api/v1/me/bookmarks").param("q", "elections").session(me))
 			.andExpect(jsonPath("$.items[*].article.title", contains("Election night results")));
 		mvc.perform(get("/api/v1/me/bookmarks").session(someoneElse)).andExpect(jsonPath("$.items", empty()));
+		mvc.perform(get("/api/v1/me/bookmarks/" + election).session(me)).andExpect(jsonPath("$.bookmarked").value(true));
+		mvc.perform(get("/api/v1/me/bookmarks/" + election).session(someoneElse))
+			.andExpect(jsonPath("$.bookmarked").value(false));
 		// Removing someone else's bookmark does nothing to mine.
 		send(delete("/api/v1/me/bookmarks/" + election), someoneElse, "").andExpect(status().isNoContent());
 		mvc.perform(get("/api/v1/me/bookmarks").session(me)).andExpect(jsonPath("$.items", hasSize(2)));

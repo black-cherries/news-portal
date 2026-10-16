@@ -65,9 +65,11 @@ public class ReaderService {
 		}
 		Optional<String> body = contents.findById(d.id()).map(ArticleContent::getBodyHtml);
 		FullTextStatus status = body.isPresent() ? FullTextStatus.AVAILABLE : FullTextStatus.NOT_PROVIDED;
+		// FR-059: reading the full text aloud needs its own permission.
+		boolean narrate = body.isPresent() && rights.check(row.sourceId(), ContentUse.NARRATION).allowed();
 		return new ArticleDetail(d.id(), d.title(), d.excerpt(), d.author(), d.publisher(), d.sourceUrl(),
 				d.language(), d.direction(), d.publishedAt(), d.publisherUpdatedAt(), d.ingestedAt(), d.lastSeenAt(),
-				d.categories(), d.publisherCategories(), status, body.orElse(null));
+				d.categories(), d.publisherCategories(), status, body.orElse(null), narrate);
 	}
 
 	public List<Publisher> publishers() {

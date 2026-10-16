@@ -114,7 +114,7 @@ public class ReaderRepository {
 					rs.getString("author"), publisher(rs), rs.getString("canonical_url"), language,
 					ReaderDtos.direction(language), instant(rs, "published_at"), instant(rs, "publisher_updated_at"),
 					instant(rs, "first_ingested_at"), instant(rs, "last_ingested_at"), strings(rs, "categories"),
-					strings(rs, "publisher_categories"), FullTextStatus.NOT_PERMITTED, null);
+					strings(rs, "publisher_categories"), FullTextStatus.NOT_PERMITTED, null, false);
 			return new DetailRow(rs.getLong("source_id"), detail);
 		}).stream().findFirst();
 	}

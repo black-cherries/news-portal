@@ -50,6 +50,7 @@ Saved lists only show articles the publisher's rights still allow. `hiddenCount`
 | `GET /me/for-you?cursor&size` | | Rule-based feed (FR-024) in the reader's news languages and topics, newest first. Same shape as `/articles`. |
 | `GET /me/for-you/other-languages?size=5` | | A small, separately labelled sample from other languages (FR-029); at most 10 items |
 | `GET /me/bookmarks?q&page&size` | | `{items:[{savedAt, article}], page, size, hasMore, hiddenCount}`. `q` searches within bookmarks. |
+| `GET /me/bookmarks/{articleId}` | | `{bookmarked: true|false}` |
 | `PUT /me/bookmarks/{articleId}` | | `204`. Idempotent. `404` if the article isn't visible. |
 | `DELETE /me/bookmarks/{articleId}` | | `204` |
 | `GET /me/collections` | | `[{id, name, itemCount, createdAt, updatedAt}]` |
@@ -187,6 +188,7 @@ Returns the same fields as a list item, plus:
 | `publisherCategories` | The publisher's own labels, kept separate from app categories (FR-027) |
 | `fullTextStatus` | `AVAILABLE`, `NOT_PERMITTED` or `NOT_PROVIDED` (FR-018, FR-019) |
 | `fullTextHtml` | Sanitized HTML, present only when `fullTextStatus` is `AVAILABLE` |
+| `fullTextNarrationPermitted` | `true` when text-to-speech may read the full text. When `false`, only the title and excerpt may be read aloud (FR-059). |
 
 When full text isn't available, clients show the excerpt and link to `sourceUrl`.
 

@@ -165,6 +165,13 @@ public class MeService {
 				""", p);
 	}
 
+	@Transactional(readOnly = true)
+	public boolean isBookmarked(long userId, long articleId) {
+		return Boolean.TRUE.equals(jdbc.queryForObject(
+				"SELECT EXISTS (SELECT 1 FROM bookmark WHERE user_id = :uid AND article_id = :aid)",
+				params(userId).addValue("aid", articleId), Boolean.class));
+	}
+
 	public void removeBookmark(long userId, long articleId) {
 		jdbc.update("DELETE FROM bookmark WHERE user_id = :uid AND article_id = :aid",
 				params(userId).addValue("aid", articleId));

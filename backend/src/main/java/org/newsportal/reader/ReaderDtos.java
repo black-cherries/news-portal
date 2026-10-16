@@ -33,10 +33,14 @@ public final class ReaderDtos {
 		NOT_PROVIDED
 	}
 
+	/**
+	 * {@code fullTextNarrationPermitted}: text-to-speech may read the full
+	 * text. When false, only the title and excerpt may be read aloud (FR-059).
+	 */
 	public record ArticleDetail(long id, String title, String excerpt, String author, Publisher publisher,
 			String sourceUrl, String language, String direction, Instant publishedAt, Instant publisherUpdatedAt,
 			Instant ingestedAt, Instant lastSeenAt, List<String> categories, List<String> publisherCategories,
-			FullTextStatus fullTextStatus, String fullTextHtml) {
+			FullTextStatus fullTextStatus, String fullTextHtml, boolean fullTextNarrationPermitted) {
 	}
 
 	public record Category(String code) {

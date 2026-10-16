@@ -126,6 +126,12 @@ public class MeController {
 		return me.bookmarks(user.userId(), text, page, size);
 	}
 
+	@GetMapping("/bookmarks/{articleId}")
+	public Map<String, Boolean> isBookmarked(@AuthenticationPrincipal AuthPrincipal user,
+			@PathVariable long articleId) {
+		return Map.of("bookmarked", me.isBookmarked(user.userId(), articleId));
+	}
+
 	@PutMapping("/bookmarks/{articleId}")
 	public ResponseEntity<Void> bookmark(@AuthenticationPrincipal AuthPrincipal user, @PathVariable long articleId) {
 		me.addBookmark(user.userId(), articleId);

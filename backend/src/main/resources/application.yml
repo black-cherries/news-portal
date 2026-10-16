@@ -1,0 +1,71 @@
+# Shared settings. Secrets and per-environment values come from environment
+# variables or from the git-ignored ../.env file (see ../.env.example).
+spring:
+  application:
+    name: news-portal-backend
+  config:
+    import: optional:file:../.env[.properties],optional:file:./.env[.properties]
+  profiles:
+    default: dev
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Schema is owned by Flyway; Hibernate only checks that entities match it.
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: ${SERVER_PORT:8081}
+  servlet:
+    session:
+      timeout: 7d
+      cookie:
+        name: NPSESSION
+        http-only: true
+        same-site: lax
+        secure: ${SESSION_COOKIE_SECURE:false}
+  error:
+    include-stacktrace: never
+    include-message: never
+
+newsportal:
+  privacy:
+    # FR-052: how long a deleted account can still be restored.
+    deletion-recovery-period: ${DELETION_RECOVERY_PERIOD:P7D}
+    purge-enabled: ${PRIVACY_PURGE_ENABLED:true}
+    # FR-055: list of purged user ids kept outside the database. Store it
+    # where database restores do not overwrite it, and include it in backups.
+    deletion-ledger-file: ${DELETION_LEDGER_FILE:../data/deletion-ledger.txt}
+  mail:
+    # outbox = write emails to files (development only); smtp = real delivery via spring.mail.*
+    mode: ${MAIL_MODE:outbox}
+    from: ${MAIL_FROM:no-reply@localhost}
+    outbox-dir: ${MAIL_OUTBOX_DIR:../.mail-outbox}
+    public-base-url: ${PUBLIC_BASE_URL:http://127.0.0.1:5173}
+  ingestion:
+    scheduler-enabled: ${INGESTION_SCHEDULER_ENABLED:true}
+    poll-interval: PT1M
+    user-agent: NewsPortalBot/0.1 (local pilot)
+    connect-timeout: PT10S
+    request-timeout: PT30S
+    max-feed-bytes: 5242880
+    max-items-per-feed: 200
+    max-backoff: PT6H
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true

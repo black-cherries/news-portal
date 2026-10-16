@@ -1,0 +1,24 @@
+# Tests run against a dedicated PostgreSQL database, never the dev one.
+spring:
+  datasource:
+    url: ${TEST_DB_URL}
+    username: ${TEST_DB_USERNAME}
+    password: ${TEST_DB_PASSWORD}
+  flyway:
+    # Needed by CleanMigrateTestConfig, which rebuilds the schema each run.
+    clean-disabled: false
+
+newsportal:
+  privacy:
+    # Tests trigger the purge directly.
+    purge-enabled: false
+    deletion-ledger-file: target/test-deletion-ledger.txt
+  mail:
+    mode: capture
+    public-base-url: http://app.test
+  ingestion:
+    # Tests trigger ingestion directly.
+    scheduler-enabled: false
+    connect-timeout: PT2S
+    request-timeout: PT5S
+    max-feed-bytes: 65536

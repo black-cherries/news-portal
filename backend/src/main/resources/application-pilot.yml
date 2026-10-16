@@ -1,0 +1,29 @@
+# Pilot/production profile. No fallbacks: startup fails if DB_URL,
+# DB_USERNAME, DB_PASSWORD, SERVER_ADDRESS, MAIL_FROM, PUBLIC_BASE_URL or the
+# SMTP settings are missing.
+spring:
+  flyway:
+    clean-disabled: true
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+
+server:
+  address: ${SERVER_ADDRESS}
+  servlet:
+    session:
+      cookie:
+        # Requires HTTPS in front of the app (FR-043).
+        secure: true
+
+newsportal:
+  mail:
+    mode: smtp
+    from: ${MAIL_FROM}
+    public-base-url: ${PUBLIC_BASE_URL}

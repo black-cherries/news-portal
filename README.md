@@ -63,7 +63,7 @@ On startup, the backend applies Flyway migrations to the dev database.
 
 ```powershell
 cd backend; .\mvnw.cmd test
-cd frontend; npm run build; npm run lint
+cd frontend; npm test; npm run build; npm run lint
 ```
 
 Backend tests use the `test` profile. The test database is **wiped and re-migrated** on every run. Never point `TEST_DB_URL` at a database whose data you need.
@@ -77,6 +77,14 @@ Backend tests use the `test` profile. The test database is **wiped and re-migrat
 | `pilot` | Pilot/production | Needs `SERVER_ADDRESS` and the `DB_*` variables, with no defaults. Flyway `clean` is disabled. |
 
 Hibernate never changes the schema (`ddl-auto: validate`). Only Flyway does.
+
+## Frontend languages
+
+- Interface text is in `frontend/src/i18n/messages.ts`. The Hindi, Urdu and Arabic strings are drafts and need a native-speaker review before the pilot.
+- A test fails if any language is missing a key or a `{placeholder}`.
+- Urdu and Arabic switch the whole page to right-to-left.
+- Article text always carries its own `lang` and `dir`, so mixed-language pages render correctly.
+- The Urdu Nastaliq font is self-hosted, so no third-party font requests are made.
 
 ## Accounts and email
 

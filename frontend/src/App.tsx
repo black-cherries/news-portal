@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router'
+import { AdminLayout } from './admin/AdminLayout'
+import { DashboardPage } from './admin/DashboardPage'
+import { ReportAdminDetailPage, ReportsAdminPage } from './admin/ReportsAdminPages'
+import { SourceDetailPage } from './admin/SourceDetailPage'
+import { HealthPage, SourcesPage } from './admin/SourcesPage'
+import { AuditPage, OpsPage, StaffPage } from './admin/SystemPages'
 import { useAuth } from './auth/AuthProvider'
 import { Layout } from './components/Layout'
 import { useI18n } from './i18n/I18nProvider'
@@ -49,6 +55,17 @@ export default function App() {
         <Route path="/settings" element={<ReaderOnly><SettingsPage /></ReaderOnly>} />
         <Route path="/report" element={<ReportPage />} />
         <Route path="/reports" element={<ReaderOnly><MyReportsPage /></ReaderOnly>} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="sources" element={<SourcesPage />} />
+          <Route path="sources/:id" element={<SourceDetailPage />} />
+          <Route path="health" element={<HealthPage />} />
+          <Route path="reports" element={<ReportsAdminPage />} />
+          <Route path="reports/:id" element={<ReportAdminDetailPage />} />
+          <Route path="staff" element={<StaffPage />} />
+          <Route path="ops" element={<OpsPage />} />
+          <Route path="audit" element={<AuditPage />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>

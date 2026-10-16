@@ -107,7 +107,14 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </header>
-      {me && me.accountType === 'STAFF' && <p className="notice">{t('auth.staffNote')}</p>}
+      {me && me.accountType === 'STAFF' && !location.pathname.startsWith('/admin') && (
+        <p className="notice">
+          {t('auth.staffNote')}{' '}
+          <NavLink to="/admin" lang="en">
+            Open the staff console
+          </NavLink>
+        </p>
+      )}
       <main id="main" ref={mainRef}>
         {children}
       </main>

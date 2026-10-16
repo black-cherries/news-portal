@@ -1,0 +1,11 @@
+package org.newsportal.source;
+
+public enum ReviewAction {
+	RIGHTS_DECISION,
+	USE_SUSPENDED,
+	USE_RESTORED,
+	SOURCE_ACTIVATED,
+	SOURCE_SUSPENDED,
+	SOURCE_RESTORED,
+	SOURCE_RETIRED
+}

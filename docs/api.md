@@ -92,6 +92,22 @@ After the period, an hourly job deletes the account and everything it owns. Arti
 - **References:** random, for example `NP-7K3QX9M2`. A report can only be viewed by its signed-in reporter, never through a public link (FR-072).
 - **Content:** reports never change an article automatically (FR-073).
 
+## Email digests and breaking-news alerts (FR-065 to FR-069)
+
+| Endpoint | Who | Body | Notes |
+|---|---|---|---|
+| `GET /me/notifications` | Reader | | `{digest, breakingAlerts, languages, topics, nextDigestAt}` |
+| `PUT /me/notifications` | Reader | `{digest, breakingAlerts?, languages?, topics?}` | `digest` is `OFF`, `DAILY` or `WEEKLY` and is required. `nextDigestAt` is ignored. |
+| `POST /notifications/unsubscribe` | Anyone with the link | `{token, kind?}` | `kind` is `DIGEST`, `ALERTS` or `ALL` (default). `200 {unsubscribed: true}`, or `404` for an unknown link. At most 30 per hour per address. |
+
+- **Defaults:** everything is off until the reader turns it on (FR-066). Empty `languages` or `topics` means "same as my For You settings": news languages, or the interface language if none; feed topics, or every topic if none.
+- **Digests:** sent one period after they are turned on, then daily or weekly. A digest lists articles that arrived since the previous one and that the publisher's rights still allow: up to 15 for daily, 30 for weekly. Nothing is sent when nothing matched.
+- **Language (FR-068):** digest and alert emails use the reader's digest language, or the interface language if none is set. Articles keep their original title, and any article in another language is labelled with that language. The Hindi, Urdu and Arabic email texts are drafts.
+- **Duplicates (FR-067):** the same headline from several publishers appears once in a digest, naming the other publishers.
+- **Unsubscribe:** every notification email links to `/unsubscribe#token=…&kind=…`. The token is random and per reader, and it can only turn notifications off. The page asks before changing anything, so link scanners don't unsubscribe people. The unsubscribe endpoint keeps normal CSRF protection, so a one-click `List-Unsubscribe` header is not offered yet.
+- **Other email (FR-069):** account, security and report-update emails are sent as needed and are not affected by these settings. The app sends no promotional email. Adding any would need a separate consent setting first.
+- The settings and the log of notification emails sent (kind, outcome, item count and time) are part of the personal-data export. The log is kept for 30 days.
+
 ## Staff API (`/admin`)
 
 Requires a signed-in staff account. Any staff role can read. Only `SOURCE_MANAGER` can change publishers, rights and feeds. Only `SYSTEM_ADMIN` can manage staff and read the audit log.
@@ -156,6 +172,24 @@ Health rules:
 | `GET /admin/reports/stats` | | Counts by status and type, plus open reports older than 7 days. Analysts can use this one. |
 
 All changes are written to the audit log. When a reporter's account is purged, the report remains, without the link to them (FR-054).
+
+### Breaking-news alerts (CONTENT_REVIEWER)
+
+Alerts are chosen by staff. Nothing is sent automatically, because related-story detection is a later phase (SRS §3.2). Syndicated copies therefore never count as confirmation of a story (FR-067).
+
+| Endpoint | Body | Notes |
+|---|---|---|
+| `GET /admin/alerts?page&size` | | Newest first |
+| `GET /admin/alerts/{id}` | | |
+| `POST /admin/alerts` | `{articleId, reason}` | `201`, status `QUEUED`. `404` if the article isn't shown to readers. `409` if this article already has an alert, if the same headline had one in the last 24 hours, or if the app-wide limit is reached. |
+| `POST /admin/alerts/{id}/cancel` | `{reason}` | Only while `QUEUED`; otherwise `409` |
+
+- **Statuses:** `QUEUED`, `SENDING`, `SENT`, `CANCELLED`.
+- **Hold:** an alert waits `ALERT_HOLD` (default 2 minutes) before it is sent, so a mistake can be cancelled.
+- **Recipients:** readers who turned alerts on and whose notification languages and topics match the article.
+- **Rights:** they are checked again just before sending. If the article is no longer shown, the alert is cancelled automatically.
+- **Limits:** each reader gets at most `MAX_ALERTS_PER_READER_PER_DAY` alerts (default 3) in 24 hours. Readers over the limit are skipped and counted in `skippedCount`. Staff can create at most `MAX_ALERTS_PER_DAY` alerts (default 6) in 24 hours.
+- **Audit:** creating and cancelling alerts are written to the audit log. The reason is for staff only and never appears in the email.
 
 ### Operations (SYSTEM_ADMIN)
 

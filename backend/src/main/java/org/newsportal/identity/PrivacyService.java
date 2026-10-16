@@ -141,7 +141,8 @@ public class PrivacyService {
 
 	private void anonymize(long userId) {
 		for (String table : List.of("bookmark", "collection", "reading_history", "user_language", "user_topic",
-				"auth_token")) {
+				"auth_token", "notification_delivery", "notification_language", "notification_topic",
+				"notification_setting")) {
 			jdbc.update("DELETE FROM " + table + " WHERE user_id = ?", userId);
 		}
 		jdbc.update("""

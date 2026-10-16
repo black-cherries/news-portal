@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router'
 import { AdminLayout } from './admin/AdminLayout'
+import { AlertsPage } from './admin/AlertsPage'
 import { DashboardPage } from './admin/DashboardPage'
 import { ReportAdminDetailPage, ReportsAdminPage } from './admin/ReportsAdminPages'
 import { SourceDetailPage } from './admin/SourceDetailPage'
@@ -17,6 +18,7 @@ import { LatestPage } from './pages/LatestPage'
 import { MyReportsPage, ReportPage } from './pages/ReportPages'
 import { CollectionPage, SavedPage } from './pages/SavedPages'
 import { SettingsPage } from './pages/SettingsPage'
+import { UnsubscribePage } from './pages/UnsubscribePage'
 
 /** Reader-only pages: guests go to sign-in. The backend enforces this too. */
 function ReaderOnly({ children }: { children: ReactNode }) {
@@ -53,6 +55,7 @@ export default function App() {
         <Route path="/saved/collections/:id" element={<ReaderOnly><CollectionPage /></ReaderOnly>} />
         <Route path="/history" element={<ReaderOnly><HistoryPage /></ReaderOnly>} />
         <Route path="/settings" element={<ReaderOnly><SettingsPage /></ReaderOnly>} />
+        <Route path="/unsubscribe" element={<UnsubscribePage />} />
         <Route path="/report" element={<ReportPage />} />
         <Route path="/reports" element={<ReaderOnly><MyReportsPage /></ReaderOnly>} />
         <Route path="/admin" element={<AdminLayout />}>
@@ -62,6 +65,7 @@ export default function App() {
           <Route path="health" element={<HealthPage />} />
           <Route path="reports" element={<ReportsAdminPage />} />
           <Route path="reports/:id" element={<ReportAdminDetailPage />} />
+          <Route path="alerts" element={<AlertsPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="ops" element={<OpsPage />} />
           <Route path="audit" element={<AuditPage />} />

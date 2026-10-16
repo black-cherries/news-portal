@@ -7,6 +7,7 @@ import { AuthProvider } from '../auth/AuthProvider'
 import { I18nProvider } from '../i18n/I18nProvider'
 import { mockFetch } from '../test/render'
 import { AdminLayout } from './AdminLayout'
+import { AlertsPage } from './AlertsPage'
 import { ReportAdminDetailPage } from './ReportsAdminPages'
 import { SourceDetailPage } from './SourceDetailPage'
 import { SourcesPage } from './SourcesPage'
@@ -92,6 +93,39 @@ describe('staff console', () => {
       notes: 'Licence clause 2 allows headlines.',
       expiresAt: null,
     })
+  })
+
+  it('queues a breaking-news alert for a chosen article with a reason, and hides the screen from analysts', async () => {
+    document.cookie = 'XSRF-TOKEN=t; path=/'
+    const article = {
+      id: 42, title: 'Major earthquake reported', excerpt: null,
+      publisher: { code: 'demo-en', name: 'Demo English Times', homepageUrl: 'https://en.demo.invalid/' },
+      sourceUrl: 'https://en.demo.invalid/a', language: 'en', direction: 'ltr', publishedAt: '2026-10-10T09:00:00Z',
+      publisherUpdatedAt: null, ingestedAt: '2026-10-10T09:01:00Z', categories: [],
+    }
+    const calls = mockFetch({
+      '/api/v1/auth/me': { body: staff(['CONTENT_REVIEWER']) },
+      '/api/v1/admin/alerts': { status: 201, body: { items: [], page: 0, size: 50, hasMore: false } },
+      '/api/v1/articles': { body: { items: [article], nextCursor: null } },
+    })
+    const { unmount } = renderAdmin('/admin/alerts', <AlertsPage />, 'alerts')
+
+    expect(await screen.findByText('No alerts yet.')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText(/Find the article/), 'earthquake')
+    await userEvent.click(screen.getByRole('button', { name: 'Search' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Choose' }))
+    await userEvent.type(screen.getByLabelText(/Why is this breaking news/), 'Confirmed by two agencies')
+    await userEvent.click(screen.getByRole('button', { name: 'Queue alert' }))
+
+    expect(calls.some((c) => c.url === '/api/v1/articles?q=earthquake&size=10')).toBe(true)
+    const post = calls.find((c) => c.url === '/api/v1/admin/alerts' && c.init?.method === 'POST')
+    expect(JSON.parse(String(post?.init?.body))).toEqual({ articleId: 42, reason: 'Confirmed by two agencies' })
+    unmount()
+
+    mockFetch({ '/api/v1/auth/me': { body: staff(['ANALYST']) } })
+    renderAdmin('/admin/alerts', <AlertsPage />, 'alerts')
+    expect(await screen.findByText('Only content reviewers send breaking-news alerts.')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Alerts' })).not.toBeInTheDocument()
   })
 
   it('only offers "resolved" for a report under review and sends the resolution', async () => {

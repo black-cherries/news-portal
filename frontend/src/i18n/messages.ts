@@ -182,6 +182,30 @@ const en = {
   'settings.deleted': 'Your account will be deleted on {date}. Sign in before then to restore it.',
   'settings.wrongPassword': 'Password is incorrect.',
 
+  'notify.title': 'Email notifications',
+  'notify.hint':
+    'Notification emails stay off unless you turn them on. Account and security emails are always sent. We do not send promotional email.',
+  'notify.digest': 'Email digest',
+  'notify.off': 'Off',
+  'notify.daily': 'Daily',
+  'notify.weekly': 'Weekly',
+  'notify.next': 'Next digest: {date}',
+  'notify.alerts': 'Breaking-news alerts for major stories',
+  'notify.languages': 'Languages for notifications',
+  'notify.languagesHint': 'Leave all unticked to use your news languages.',
+  'notify.topics': 'Topics for notifications',
+  'notify.topicsHint': 'Leave all unticked to use your topics above.',
+  'notify.languageNote':
+    'Digests are written in your email digest language. Articles in other languages keep their original title and are labelled with their language.',
+
+  'unsubscribe.title': 'Unsubscribe',
+  'unsubscribe.intro': 'Choose which emails to stop. Account and security emails will still be sent.',
+  'unsubscribe.digest': 'Stop email digests',
+  'unsubscribe.alerts': 'Stop breaking-news alerts',
+  'unsubscribe.all': 'Stop all notification emails',
+  'unsubscribe.done': 'Done. You will not get these emails any more. You can turn them back on in Settings.',
+  'unsubscribe.invalid': 'This unsubscribe link is not valid. Sign in and change your email settings in Settings.',
+
   'category.world': 'World',
   'category.national': 'National',
   'category.politics': 'Politics',
@@ -376,6 +400,30 @@ const hi: Dictionary = {
   'settings.deleted': 'आपका खाता {date} को हटा दिया जाएगा। इसे वापस लाने के लिए उससे पहले साइन इन करें।',
   'settings.wrongPassword': 'पासवर्ड गलत है।',
 
+  'notify.title': 'ईमेल सूचनाएँ',
+  'notify.hint':
+    'जब तक आप चालू न करें, सूचना ईमेल बंद रहते हैं। खाते और सुरक्षा से जुड़े ईमेल हमेशा भेजे जाते हैं। हम प्रचार वाले ईमेल नहीं भेजते।',
+  'notify.digest': 'ईमेल सारांश',
+  'notify.off': 'बंद',
+  'notify.daily': 'रोज़',
+  'notify.weekly': 'हर सप्ताह',
+  'notify.next': 'अगला सारांश: {date}',
+  'notify.alerts': 'बड़ी ख़बरों के लिए ब्रेकिंग न्यूज़ अलर्ट',
+  'notify.languages': 'सूचनाओं की भाषाएँ',
+  'notify.languagesHint': 'अपनी समाचार भाषाएँ इस्तेमाल करने के लिए सभी को खाली छोड़ें।',
+  'notify.topics': 'सूचनाओं के विषय',
+  'notify.topicsHint': 'ऊपर चुने गए विषय इस्तेमाल करने के लिए सभी को खाली छोड़ें।',
+  'notify.languageNote':
+    'सारांश आपकी ईमेल सारांश की भाषा में होता है। दूसरी भाषाओं के लेख अपने मूल शीर्षक और भाषा के लेबल के साथ दिखते हैं।',
+
+  'unsubscribe.title': 'सदस्यता छोड़ें',
+  'unsubscribe.intro': 'चुनें कि कौन-से ईमेल बंद करने हैं। खाते और सुरक्षा से जुड़े ईमेल फिर भी भेजे जाएँगे।',
+  'unsubscribe.digest': 'ईमेल सारांश बंद करें',
+  'unsubscribe.alerts': 'ब्रेकिंग न्यूज़ अलर्ट बंद करें',
+  'unsubscribe.all': 'सभी सूचना ईमेल बंद करें',
+  'unsubscribe.done': 'हो गया। अब आपको ये ईमेल नहीं मिलेंगे। आप इन्हें सेटिंग्स में फिर से चालू कर सकते हैं।',
+  'unsubscribe.invalid': 'सदस्यता छोड़ने का यह लिंक मान्य नहीं है। साइन इन करें और सेटिंग्स में ईमेल सेटिंग बदलें।',
+
   'category.world': 'विश्व',
   'category.national': 'राष्ट्रीय',
   'category.politics': 'राजनीति',
@@ -566,6 +614,30 @@ const ur: Dictionary = {
   'settings.deleted': 'آپ کا اکاؤنٹ {date} کو حذف ہو جائے گا۔ اسے بحال کرنے کے لیے اس سے پہلے سائن اِن کریں۔',
   'settings.wrongPassword': 'پاس ورڈ غلط ہے۔',
 
+  'notify.title': 'ای میل اطلاعات',
+  'notify.hint':
+    'جب تک آپ آن نہ کریں، اطلاعاتی ای میلز بند رہتی ہیں۔ اکاؤنٹ اور سیکیورٹی کی ای میلز ہمیشہ بھیجی جاتی ہیں۔ ہم تشہیری ای میلز نہیں بھیجتے۔',
+  'notify.digest': 'ای میل خلاصہ',
+  'notify.off': 'بند',
+  'notify.daily': 'روزانہ',
+  'notify.weekly': 'ہفتہ وار',
+  'notify.next': 'اگلا خلاصہ: {date}',
+  'notify.alerts': 'اہم خبروں کے لیے بریکنگ نیوز الرٹس',
+  'notify.languages': 'اطلاعات کی زبانیں',
+  'notify.languagesHint': 'اپنی خبروں کی زبانیں استعمال کرنے کے لیے سب کو خالی چھوڑ دیں۔',
+  'notify.topics': 'اطلاعات کے موضوعات',
+  'notify.topicsHint': 'اوپر چنے گئے موضوعات استعمال کرنے کے لیے سب کو خالی چھوڑ دیں۔',
+  'notify.languageNote':
+    'خلاصہ آپ کی ای میل خلاصے کی زبان میں ہوتا ہے۔ دوسری زبانوں کے مضامین اپنی اصل سرخی اور زبان کے لیبل کے ساتھ دکھائے جاتے ہیں۔',
+
+  'unsubscribe.title': 'رکنیت ختم کریں',
+  'unsubscribe.intro': 'منتخب کریں کہ کون سی ای میلز بند کرنی ہیں۔ اکاؤنٹ اور سیکیورٹی کی ای میلز پھر بھی بھیجی جائیں گی۔',
+  'unsubscribe.digest': 'ای میل خلاصہ بند کریں',
+  'unsubscribe.alerts': 'بریکنگ نیوز الرٹس بند کریں',
+  'unsubscribe.all': 'تمام اطلاعاتی ای میلز بند کریں',
+  'unsubscribe.done': 'ہو گیا۔ اب آپ کو یہ ای میلز نہیں ملیں گی۔ آپ انہیں ترتیبات میں دوبارہ آن کر سکتے ہیں۔',
+  'unsubscribe.invalid': 'رکنیت ختم کرنے کا یہ لنک درست نہیں ہے۔ سائن اِن کریں اور ترتیبات میں ای میل کی ترتیبات تبدیل کریں۔',
+
   'category.world': 'دنیا',
   'category.national': 'قومی',
   'category.politics': 'سیاست',
@@ -755,6 +827,30 @@ const ar: Dictionary = {
   'settings.deleteButton': 'حذف حسابي',
   'settings.deleted': 'سيُحذف حسابك في {date}. سجّل الدخول قبل ذلك لاستعادته.',
   'settings.wrongPassword': 'كلمة المرور غير صحيحة.',
+
+  'notify.title': 'إشعارات البريد الإلكتروني',
+  'notify.hint':
+    'تبقى رسائل الإشعارات متوقفة ما لم تفعّلها. تُرسل رسائل الحساب والأمان دائمًا. لا نرسل رسائل ترويجية.',
+  'notify.digest': 'ملخص البريد الإلكتروني',
+  'notify.off': 'متوقف',
+  'notify.daily': 'يومي',
+  'notify.weekly': 'أسبوعي',
+  'notify.next': 'الملخص التالي: {date}',
+  'notify.alerts': 'تنبيهات الأخبار العاجلة للأحداث الكبرى',
+  'notify.languages': 'لغات الإشعارات',
+  'notify.languagesHint': 'اترك الكل دون تحديد لاستخدام لغات الأخبار الخاصة بك.',
+  'notify.topics': 'مواضيع الإشعارات',
+  'notify.topicsHint': 'اترك الكل دون تحديد لاستخدام المواضيع المختارة أعلاه.',
+  'notify.languageNote':
+    'يُكتب الملخص بلغة ملخص البريد الإلكتروني. تحتفظ المقالات بلغات أخرى بعنوانها الأصلي مع إشارة إلى لغتها.',
+
+  'unsubscribe.title': 'إلغاء الاشتراك',
+  'unsubscribe.intro': 'اختر الرسائل التي تريد إيقافها. ستظل رسائل الحساب والأمان تُرسل.',
+  'unsubscribe.digest': 'إيقاف ملخصات البريد الإلكتروني',
+  'unsubscribe.alerts': 'إيقاف تنبيهات الأخبار العاجلة',
+  'unsubscribe.all': 'إيقاف جميع رسائل الإشعارات',
+  'unsubscribe.done': 'تم. لن تصلك هذه الرسائل بعد الآن. يمكنك إعادة تفعيلها من الإعدادات.',
+  'unsubscribe.invalid': 'رابط إلغاء الاشتراك هذا غير صالح. سجّل الدخول وغيّر إعدادات البريد من الإعدادات.',
 
   'category.world': 'العالم',
   'category.national': 'محلية',

@@ -88,6 +88,23 @@ The interface starts in English. It switches only when the reader picks another 
 - Article text always carries its own `lang` and `dir`, so mixed-language pages render correctly.
 - The Urdu Nastaliq font is self-hosted, so no third-party font requests are made.
 
+## Real news publishers
+
+`scripts/publishers/candidates.json` lists about 20 real publishers with working RSS feeds, covering English, Hindi, Urdu and Arabic: BBC, UN News, The Hindu, The Times of India, NDTV, Amar Ujala, Express, Al Jazeera, Asharq Al-Awsat, The Guardian and DW. A public feed is not permission (FR-007), so loading them takes two steps.
+
+1. Add them as proposed publishers. Nothing is fetched yet:
+   ```powershell
+   .\scripts\publishers\import-candidates.ps1
+   ```
+2. For each publisher, read its terms, then record your decision. You can do this in the staff console (Publishers → the publisher → Record decision, then Activate), or with:
+   ```powershell
+   .\scripts\publishers\approve-publishers.ps1 -Codes bbc-news,un-news-en -Uses metadata,image `
+       -Notes "What you reviewed and when" -IReviewedTheTerms
+   ```
+   This records the decision in your name, in the review history and audit log. Grant only the uses the terms allow; `metadata` means headline, summary and link.
+
+Approved feeds are fetched within a minute or two and then every 30 minutes.
+
 ## Translation (Claude via Spring AI)
 
 Readers can translate an article into English, Hindi, Urdu or Arabic from the article page ("Read in … · Translate"). This is a machine translation and is labelled as one.

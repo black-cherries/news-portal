@@ -49,6 +49,44 @@ class FeedParserTest {
 	}
 
 	@Test
+	void collectsVideoLinksFromEnclosuresMediaRssAndVideoPages() throws Exception {
+		ParsedFeed feed = parser.parse(bytes("""
+				<?xml version="1.0" encoding="UTF-8"?>
+				<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+				  <channel>
+				    <title>Example</title><link>https://example.org/</link><description>d</description>
+				    <item>
+				      <title>With videos</title>
+				      <link>https://example.org/a</link>
+				      <enclosure url="https://cdn.example.org/clip.mp4" type="video/mp4" length="1000"/>
+				      <media:content url="https://cdn.example.org/photo.jpg" medium="image"/>
+				      <media:group>
+				        <media:content url="https://cdn.example.org/clip.webm" type="video/webm; codecs=vp9"/>
+				        <media:player url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"/>
+				      </media:group>
+				      <media:player url="https://example.org/video-page"/>
+				      <media:content url="javascript:alert(1)" medium="video"/>
+				    </item>
+				    <item>
+				      <title>A video page</title>
+				      <link>https://youtu.be/dQw4w9WgXcQ</link>
+				      <enclosure url="https://cdn.example.org/a.mp3" type="audio/mpeg" length="1"/>
+				    </item>
+				    <item><title>No video</title><link>https://example.org/c</link></item>
+				  </channel>
+				</rss>
+				"""));
+
+		assertThat(feed.entries().get(0).videos()).containsExactly(
+				new FeedParser.FeedVideo("https://cdn.example.org/clip.mp4", "video/mp4"),
+				new FeedParser.FeedVideo("https://cdn.example.org/clip.webm", "video/webm"),
+				new FeedParser.FeedVideo("https://www.youtube.com/watch?v=dQw4w9WgXcQ", null));
+		assertThat(feed.entries().get(1).videos())
+			.containsExactly(new FeedParser.FeedVideo("https://youtu.be/dQw4w9WgXcQ", null));
+		assertThat(feed.entries().get(2).videos()).isEmpty();
+	}
+
+	@Test
 	void parsesAtom() throws Exception {
 		ParsedFeed feed = parser.parse(bytes("""
 				<?xml version="1.0" encoding="utf-8"?>

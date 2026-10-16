@@ -523,3 +523,33 @@ thead th {
     transition: none !important;
   }
 }
+
+/* Videos (FR-056, FR-057): nothing loads from the video host before Play. */
+
+.videos {
+  display: grid;
+  gap: 1rem;
+  margin-block: 1.5rem;
+  max-width: 42rem;
+}
+
+.video-placeholder {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.video-frame iframe,
+.video-frame video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  background: #000;
+}

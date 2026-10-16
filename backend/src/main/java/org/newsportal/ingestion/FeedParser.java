@@ -4,17 +4,22 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndContent;
+import com.rometools.rome.feed.synd.SyndEnclosure;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
+import org.jdom2.Element;
+import org.newsportal.reader.VideoLinks;
 import org.springframework.stereotype.Component;
 
 /** Parses RSS/Atom bytes into plain entries. Rome rejects DOCTYPE declarations by default. */
@@ -51,7 +56,61 @@ public class FeedParser {
 			.toList();
 		return new FeedEntry(blankToNull(e.getUri()), blankToNull(e.getLink()), e.getTitle(), description, content,
 				blankToNull(e.getAuthor()), toInstant(e.getPublishedDate()), toInstant(e.getUpdatedDate()),
-				categories);
+				categories, videos(e));
+	}
+
+	/**
+	 * FR-056: videos the publisher names for this entry, from enclosures, Media
+	 * RSS ({@code media:content}, {@code media:group}, {@code media:player}) or
+	 * an entry link that is itself a known video page. Links only; at most
+	 * {@link #MAX_VIDEOS}.
+	 */
+	static List<FeedVideo> videos(SyndEntry e) {
+		Map<String, FeedVideo> found = new LinkedHashMap<>();
+		for (SyndEnclosure enclosure : e.getEnclosures()) {
+			addVideo(found, enclosure.getUrl(), enclosure.getType(), false);
+		}
+		for (Element element : e.getForeignMarkup()) {
+			collectMedia(element, found);
+		}
+		addVideo(found, e.getLink(), null, false);
+		return found.values().stream().limit(MAX_VIDEOS).toList();
+	}
+
+	static final int MAX_VIDEOS = 5;
+
+	private static final String MEDIA_RSS = "http://search.yahoo.com/mrss/";
+
+	private static void collectMedia(Element element, Map<String, FeedVideo> found) {
+		if (!MEDIA_RSS.equals(element.getNamespaceURI())) {
+			return;
+		}
+		switch (element.getName()) {
+			case "group" -> element.getChildren().forEach(child -> collectMedia(child, found));
+			case "content" -> addVideo(found, element.getAttributeValue("url"), element.getAttributeValue("type"),
+					"video".equalsIgnoreCase(element.getAttributeValue("medium")));
+			// A player address is usually a web page: only known providers count.
+			case "player" -> addVideo(found, element.getAttributeValue("url"), null, false);
+			default -> {
+			}
+		}
+	}
+
+	private static void addVideo(Map<String, FeedVideo> found, String rawUrl, String rawType, boolean declaredVideo) {
+		String url = blankToNull(rawUrl);
+		if (url == null || url.length() > 2000 || !url.matches("(?i)^https?://\\S+$")) {
+			return;
+		}
+		String type = blankToNull(rawType);
+		if (type != null && (type.length() > 100 || !type.matches("[A-Za-z0-9.+/-]+(;.*)?"))) {
+			type = null;
+		}
+		if (type != null) {
+			type = type.split(";", 2)[0].strip().toLowerCase(Locale.ROOT);
+		}
+		if (declaredVideo || VideoLinks.isVideo(url, type)) {
+			found.putIfAbsent(url, new FeedVideo(url, type));
+		}
 	}
 
 	/** "en-US" → "en". Null if absent. */
@@ -76,7 +135,22 @@ public class FeedParser {
 
 	/** One entry as the publisher supplied it. Times are null when the feed does not give them (FR-022). */
 	public record FeedEntry(String guid, String link, String title, String descriptionHtml, String contentHtml,
-			String author, Instant publishedAt, Instant updatedAt, List<String> categories) {
+			String author, Instant publishedAt, Instant updatedAt, List<String> categories, List<FeedVideo> videos) {
+
+		public FeedEntry {
+			videos = (videos == null) ? List.of() : List.copyOf(videos);
+		}
+
+		/** An entry without videos. */
+		public FeedEntry(String guid, String link, String title, String descriptionHtml, String contentHtml,
+				String author, Instant publishedAt, Instant updatedAt, List<String> categories) {
+			this(guid, link, title, descriptionHtml, contentHtml, author, publishedAt, updatedAt, categories, List.of());
+		}
+
+	}
+
+	/** A video link from the feed. {@code mimeType} is null when the feed does not say. */
+	public record FeedVideo(String url, String mimeType) {
 	}
 
 	public static class MalformedFeedException extends Exception {

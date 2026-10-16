@@ -30,6 +30,7 @@ function article(id: number, overrides: Partial<ArticleDetail> = {}): ArticleDet
     fullTextStatus: 'AVAILABLE',
     fullTextHtml: '<p>Full body text</p>',
     fullTextNarrationPermitted: true,
+    videos: [],
     ...overrides,
   }
 }

@@ -34,6 +34,18 @@ export interface ArticleDetail extends ArticleSummary {
   fullTextStatus: FullTextStatus
   fullTextHtml: string | null
   fullTextNarrationPermitted: boolean
+  videos: Video[]
+}
+
+/**
+ * A publisher's video (FR-056). embedUrl is set only when embedding is
+ * permitted and the provider is known; otherwise link to sourceUrl.
+ */
+export interface Video {
+  sourceUrl: string
+  provider: 'YOUTUBE' | 'VIMEO' | 'FILE' | 'LINK'
+  embedUrl: string | null
+  mimeType: string | null
 }
 
 export interface Me {

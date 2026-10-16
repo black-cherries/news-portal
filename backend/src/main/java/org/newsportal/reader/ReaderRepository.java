@@ -114,9 +114,16 @@ public class ReaderRepository {
 					rs.getString("author"), publisher(rs), rs.getString("canonical_url"), language,
 					ReaderDtos.direction(language), instant(rs, "published_at"), instant(rs, "publisher_updated_at"),
 					instant(rs, "first_ingested_at"), instant(rs, "last_ingested_at"), strings(rs, "categories"),
-					strings(rs, "publisher_categories"), FullTextStatus.NOT_PERMITTED, null, false);
+					strings(rs, "publisher_categories"), FullTextStatus.NOT_PERMITTED, null, false, List.of());
 			return new DetailRow(rs.getLong("source_id"), detail);
 		}).stream().findFirst();
+	}
+
+	/** Video links of one article, in feed order: [url, mimeType]. */
+	public List<String[]> findVideos(long articleId) {
+		return jdbc.query("SELECT source_url, mime_type FROM article_video WHERE article_id = :id ORDER BY position",
+				new MapSqlParameterSource("id", articleId),
+				(rs, n) -> new String[] { rs.getString("source_url"), rs.getString("mime_type") });
 	}
 
 	public List<Publisher> findVisiblePublishers(Instant now) {

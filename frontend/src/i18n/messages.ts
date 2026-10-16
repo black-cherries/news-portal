@@ -61,6 +61,11 @@ const en = {
     "The publisher has not allowed the full article to be shown here. Read it on the publisher's website.",
   'article.fullTextNotProvided':
     "The publisher's feed did not include the full article. Read it on the publisher's website.",
+  'video.title': 'Video',
+  'video.play': 'Play video',
+  'video.privacy': 'The video loads from {host} only if you choose to play it. {host} may then collect information about you.',
+  'video.watchAt': 'Watch the video at {host}',
+  'video.frameTitle': 'Video from {host}',
   'article.notFound':
     'This article is not available. It may have been removed or restricted by the publisher.',
   'article.attribution': 'Reporting by {publisher}. News Portal shows it with a link to the original.',
@@ -310,6 +315,11 @@ const hi: Dictionary = {
   'article.fullTextNotPermitted':
     'प्रकाशक ने पूरा लेख यहाँ दिखाने की अनुमति नहीं दी है। इसे प्रकाशक की वेबसाइट पर पढ़ें।',
   'article.fullTextNotProvided': 'प्रकाशक की फ़ीड में पूरा लेख शामिल नहीं था। इसे प्रकाशक की वेबसाइट पर पढ़ें।',
+  'video.title': 'वीडियो',
+  'video.play': 'वीडियो चलाएँ',
+  'video.privacy': 'वीडियो {host} से तभी लोड होता है जब आप उसे चलाना चुनें। उसके बाद {host} आपके बारे में जानकारी जुटा सकता है।',
+  'video.watchAt': '{host} पर वीडियो देखें',
+  'video.frameTitle': '{host} से वीडियो',
   'article.notFound': 'यह लेख उपलब्ध नहीं है। हो सकता है प्रकाशक ने इसे हटा दिया हो या इस पर रोक लगा दी हो।',
   'article.attribution': 'रिपोर्टिंग: {publisher}। न्यूज़ पोर्टल इसे मूल स्रोत के लिंक के साथ दिखाता है।',
 
@@ -554,6 +564,11 @@ const ur: Dictionary = {
   'article.categories': 'موضوعات',
   'article.fullTextNotPermitted': 'ناشر نے مکمل مضمون یہاں دکھانے کی اجازت نہیں دی۔ اسے ناشر کی ویب سائٹ پر پڑھیں۔',
   'article.fullTextNotProvided': 'ناشر کی فیڈ میں مکمل مضمون شامل نہیں تھا۔ اسے ناشر کی ویب سائٹ پر پڑھیں۔',
+  'video.title': 'ویڈیو',
+  'video.play': 'ویڈیو چلائیں',
+  'video.privacy': 'ویڈیو {host} سے صرف اسی وقت لوڈ ہوتی ہے جب آپ اسے چلانا منتخب کریں۔ اس کے بعد {host} آپ کے بارے میں معلومات جمع کر سکتا ہے۔',
+  'video.watchAt': '{host} پر ویڈیو دیکھیں',
+  'video.frameTitle': '{host} سے ویڈیو',
   'article.notFound': 'یہ مضمون دستیاب نہیں ہے۔ ممکن ہے ناشر نے اسے ہٹا دیا ہو یا اس پر پابندی لگا دی ہو۔',
   'article.attribution': 'رپورٹنگ: {publisher}۔ نیوز پورٹل اسے اصل ماخذ کے لنک کے ساتھ دکھاتا ہے۔',
 
@@ -798,6 +813,11 @@ const ar: Dictionary = {
   'article.categories': 'الموضوعات',
   'article.fullTextNotPermitted': 'لم يسمح الناشر بعرض المقال كاملًا هنا. اقرأه على موقع الناشر.',
   'article.fullTextNotProvided': 'لم يتضمن موجز الناشر المقال كاملًا. اقرأه على موقع الناشر.',
+  'video.title': 'فيديو',
+  'video.play': 'تشغيل الفيديو',
+  'video.privacy': 'لا يُحمَّل الفيديو من {host} إلا إذا اخترت تشغيله. وقد يجمع {host} عندها معلومات عنك.',
+  'video.watchAt': 'شاهد الفيديو على {host}',
+  'video.frameTitle': 'فيديو من {host}',
   'article.notFound': 'هذا المقال غير متاح. ربما أزاله الناشر أو قيّد الوصول إليه.',
   'article.attribution': 'تقرير من {publisher}. تعرضه بوابة الأخبار مع رابط إلى المصدر الأصلي.',
 

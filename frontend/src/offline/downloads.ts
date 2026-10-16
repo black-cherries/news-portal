@@ -95,7 +95,9 @@ export function lastSync(): string | null {
   }
 }
 
-function keepAllowed(article: ArticleDetail, level: OfflineStatus['level']): ArticleDetail {
+function keepAllowed(source: ArticleDetail, level: OfflineStatus['level']): ArticleDetail {
+  // Offline copies keep video links only: embedding is a separate permission, checked online.
+  const article = { ...source, videos: (source.videos ?? []).map((v) => ({ ...v, embedUrl: null })) }
   if (level === 'FULL_TEXT') return article
   return {
     ...article,

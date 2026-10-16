@@ -1,6 +1,7 @@
 package org.newsportal.ingestion;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import org.jsoup.Jsoup;
@@ -10,7 +11,9 @@ import org.newsportal.article.ArticleContent;
 import org.newsportal.article.ArticleContentRepository;
 import org.newsportal.article.ArticleRepository;
 import org.newsportal.ingestion.FeedParser.FeedEntry;
+import org.newsportal.ingestion.FeedParser.FeedVideo;
 import org.newsportal.source.NewsSourceRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,12 +35,15 @@ public class ArticleUpsertService {
 
 	private final CategoryAssigner categories;
 
+	private final JdbcTemplate jdbc;
+
 	public ArticleUpsertService(ArticleRepository articles, ArticleContentRepository contents,
-			NewsSourceRepository sources, CategoryAssigner categories) {
+			NewsSourceRepository sources, CategoryAssigner categories, JdbcTemplate jdbc) {
 		this.articles = articles;
 		this.contents = contents;
 		this.sources = sources;
 		this.categories = categories;
+		this.jdbc = jdbc;
 	}
 
 	public enum Result {
@@ -69,6 +75,7 @@ public class ArticleUpsertService {
 		article = articles.save(article);
 		changed |= syncContent(article.getId(), entry.contentHtml(), storeContent, now);
 		categories.assign(article.getId(), sourceId, entry.categories());
+		changed |= syncVideos(article.getId(), entry.videos());
 
 		if (created) {
 			return Result.CREATED;
@@ -95,6 +102,22 @@ public class ArticleUpsertService {
 			return true;
 		}
 		contents.save(new ArticleContent(articleId, clean, now));
+		return true;
+	}
+
+	/** Video links are metadata; embedding is decided when the article is read (FR-056). */
+	private boolean syncVideos(Long articleId, List<FeedVideo> videos) {
+		List<FeedVideo> stored = jdbc.query(
+				"SELECT source_url, mime_type FROM article_video WHERE article_id = ? ORDER BY position",
+				(rs, n) -> new FeedVideo(rs.getString("source_url"), rs.getString("mime_type")), articleId);
+		if (stored.equals(videos)) {
+			return false;
+		}
+		jdbc.update("DELETE FROM article_video WHERE article_id = ?", articleId);
+		for (int i = 0; i < videos.size(); i++) {
+			jdbc.update("INSERT INTO article_video (article_id, position, source_url, mime_type) VALUES (?, ?, ?, ?)",
+					articleId, i, videos.get(i).url(), videos.get(i).mimeType());
+		}
 		return true;
 	}
 

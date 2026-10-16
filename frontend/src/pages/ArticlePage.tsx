@@ -3,7 +3,10 @@ import { Link, useParams } from 'react-router'
 import { ApiError, api } from '../api/client'
 import type { ArticleDetail } from '../api/types'
 import { useAuth } from '../auth/AuthProvider'
+import { DownloadButton } from '../components/DownloadButton'
 import { ListenButton } from '../components/ListenButton'
+import { isUsable, removeDownload } from '../offline/downloads'
+import { offlineStore, type OfflineArticle } from '../offline/store'
 import { ReportForm } from '../components/ReportForm'
 import { SaveControls } from '../components/SaveControls'
 import { Timestamps } from '../components/Timestamps'
@@ -12,9 +15,14 @@ import { plainText, sanitize } from '../lib/html'
 
 export function ArticlePage() {
   const { id } = useParams()
-  const { t, categoryName } = useI18n()
+  const { t, categoryName, formatDateTime } = useI18n()
   const { isReader } = useAuth()
-  const [result, setResult] = useState<{ id: string; article?: ArticleDetail; error?: 'notFound' | 'error' } | null>(null)
+  const [result, setResult] = useState<{
+    id: string
+    article?: ArticleDetail
+    offline?: OfflineArticle
+    error?: 'notFound' | 'error' | 'expired'
+  } | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -24,10 +32,21 @@ export function ArticlePage() {
       .then((a) => {
         if (!cancelled) setResult({ id, article: a })
       })
-      .catch((err: unknown) => {
+      .catch(async (err: unknown) => {
         if (cancelled) return
         const notFound = err instanceof ApiError && (err.status === 404 || err.status === 400)
-        setResult({ id, error: notFound ? 'notFound' : 'error' })
+        if (notFound) {
+          // The server no longer shows it, so a download must go too (FR-063).
+          await removeDownload(Number(id)).catch(() => {})
+          if (!cancelled) setResult({ id, error: 'notFound' })
+          return
+        }
+        // No answer from the server: fall back to a download if there is one.
+        const copy = err instanceof ApiError ? undefined : await offlineStore().get(Number(id)).catch(() => undefined)
+        if (cancelled) return
+        if (!copy) setResult({ id, error: 'error' })
+        else if (!isUsable(copy)) setResult({ id, error: 'expired' })
+        else setResult({ id, article: copy.article, offline: copy })
       })
     return () => {
       cancelled = true
@@ -37,14 +56,15 @@ export function ArticlePage() {
   // Ignore a result that belongs to the previous article while the next one loads.
   const current = result && result.id === id ? result : null
   const article = current?.article ?? null
+  const offline = current?.offline ?? null
   const error = current?.error ?? null
 
   // FR-047: record reading for signed-in readers (the server ignores it while history is paused).
   useEffect(() => {
-    if (article && isReader) {
+    if (article && isReader && !offline) {
       api.post('/me/history', { articleId: article.id, kind: 'READ' }).catch(() => {})
     }
-  }, [article, isReader])
+  }, [article, isReader, offline])
 
   const bodyHtml = useMemo(
     () => (article?.fullTextStatus === 'AVAILABLE' && article.fullTextHtml ? sanitize(article.fullTextHtml) : null),
@@ -61,6 +81,7 @@ export function ArticlePage() {
       </>
     )
   }
+  if (error === 'expired') return <p role="alert" className="notice">{t('offline.expired')}</p>
   if (error) return <p role="alert" className="error">{t('common.error')}</p>
   if (!article) return <p role="status">{t('common.loading')}</p>
 
@@ -73,6 +94,11 @@ export function ArticlePage() {
 
   return (
     <article className="article">
+      {offline && (
+        <p role="status" className="notice">
+          {t('offline.viewingCopy', { date: formatDateTime(offline.savedAt) })}
+        </p>
+      )}
       <header>
         <h1 lang={article.language} dir={article.direction}>
           {article.title}
@@ -110,7 +136,8 @@ export function ArticlePage() {
             if (isReader) api.post('/me/history', { articleId: article.id, kind: 'LISTEN' }).catch(() => {})
           }}
         />
-        <SaveControls articleId={article.id} />
+        {!offline && <SaveControls articleId={article.id} />}
+        {!offline && <DownloadButton articleId={article.id} />}
       </div>
 
       {article.excerpt && !bodyHtml && (
@@ -128,7 +155,11 @@ export function ArticlePage() {
         />
       ) : (
         <p className="notice">
-          {article.fullTextStatus === 'NOT_PERMITTED' ? t('article.fullTextNotPermitted') : t('article.fullTextNotProvided')}{' '}
+          {offline?.level === 'METADATA'
+            ? t('offline.metadataOnly')
+            : article.fullTextStatus === 'NOT_PERMITTED'
+              ? t('article.fullTextNotPermitted')
+              : t('article.fullTextNotProvided')}{' '}
           <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer">
             {t('article.readAtSource', { publisher })}
             <span className="visually-hidden"> {t('common.opensNewTab')}</span>
@@ -136,10 +167,12 @@ export function ArticlePage() {
         </p>
       )}
 
-      <details className="report-box">
-        <summary>{t('report.open')}</summary>
-        <ReportForm articleId={article.id} />
-      </details>
+      {!offline && (
+        <details className="report-box">
+          <summary>{t('report.open')}</summary>
+          <ReportForm articleId={article.id} />
+        </details>
+      )}
     </article>
   )
 }

@@ -8,6 +8,14 @@ import App from './App'
 import { AuthProvider } from './auth/AuthProvider'
 import { I18nProvider } from './i18n/I18nProvider'
 
+// Production only: in development the service worker would serve stale code.
+// Browsers allow service workers only on HTTPS and on localhost.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {})
+  })
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

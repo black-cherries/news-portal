@@ -52,6 +52,9 @@ export function Layout({ children }: { children: ReactNode }) {
                   {t('nav.latest')}
                 </NavLink>
               </li>
+              <li>
+                <NavLink to="/downloads">{t('nav.downloads')}</NavLink>
+              </li>
               {isReader && (
                 <>
                   <li>

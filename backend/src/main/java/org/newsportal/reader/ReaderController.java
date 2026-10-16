@@ -22,8 +22,11 @@ public class ReaderController {
 
 	private final ReaderService reader;
 
-	public ReaderController(ReaderService reader) {
+	private final OfflineService offline;
+
+	public ReaderController(ReaderService reader, OfflineService offline) {
 		this.reader = reader;
+		this.offline = offline;
 	}
 
 	/**
@@ -40,6 +43,15 @@ public class ReaderController {
 			@RequestParam(required = false) String cursor, @RequestParam(defaultValue = "0") int size) {
 		return reader.find(new ArticleQuery(languages, List.of(), categories, sources, from, to, text,
 				Cursor.decode(cursor), size));
+	}
+
+	/**
+	 * What devices may keep for offline reading, e.g. {@code ids=1,2,3}
+	 * (FR-061, FR-063). Public, because guests can download too.
+	 */
+	@GetMapping("/articles/offline-status")
+	public List<OfflineService.Status> offlineStatus(@RequestParam(name = "ids", required = false) List<Long> ids) {
+		return offline.status(ids);
 	}
 
 	@GetMapping("/articles/{id}")

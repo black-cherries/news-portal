@@ -65,7 +65,8 @@ public class ReaderService {
 		if (!rights.check(row.sourceId(), ContentUse.FULL_TEXT_DISPLAY).allowed()) {
 			return new ArticleDetail(d.id(), d.title(), d.excerpt(), d.author(), d.publisher(), d.sourceUrl(),
 					d.language(), d.direction(), d.publishedAt(), d.publisherUpdatedAt(), d.ingestedAt(),
-					d.lastSeenAt(), d.categories(), d.publisherCategories(), d.fullTextStatus(), null, false, videos);
+					d.lastSeenAt(), d.categories(), d.publisherCategories(), d.fullTextStatus(), null, false, videos,
+					d.imageUrl());
 		}
 		Optional<String> body = contents.findById(d.id()).map(ArticleContent::getBodyHtml);
 		FullTextStatus status = body.isPresent() ? FullTextStatus.AVAILABLE : FullTextStatus.NOT_PROVIDED;
@@ -73,7 +74,7 @@ public class ReaderService {
 		boolean narrate = body.isPresent() && rights.check(row.sourceId(), ContentUse.NARRATION).allowed();
 		return new ArticleDetail(d.id(), d.title(), d.excerpt(), d.author(), d.publisher(), d.sourceUrl(),
 				d.language(), d.direction(), d.publishedAt(), d.publisherUpdatedAt(), d.ingestedAt(), d.lastSeenAt(),
-				d.categories(), d.publisherCategories(), status, body.orElse(null), narrate, videos);
+				d.categories(), d.publisherCategories(), status, body.orElse(null), narrate, videos, d.imageUrl());
 	}
 
 	/** FR-056: an embed only where VIDEO_EMBED is permitted right now; otherwise a link to the original. */

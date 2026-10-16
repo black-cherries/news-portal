@@ -39,6 +39,19 @@ public class ReaderRepository {
 			      WHERE ac.article_id = a.id AND c.active ORDER BY c.sort_order) AS categories
 			""";
 
+	/**
+	 * The lead image only while the publisher's IMAGE permission is valid;
+	 * otherwise null. Needs {@code :now}. Keep in step with {@code RightsPolicy}.
+	 */
+	public static final String IMAGE = """
+			CASE WHEN EXISTS (SELECT 1 FROM source_rights ri
+			                  WHERE ri.source_id = a.source_id AND ri.content_use = 'IMAGE'
+			                    AND ri.status = 'PERMITTED' AND NOT ri.suspended
+			                    AND (ri.valid_from IS NULL OR ri.valid_from <= :now)
+			                    AND (ri.expires_at IS NULL OR ri.expires_at > :now))
+			     THEN a.image_url END AS image_url
+			""";
+
 	// Query words are matched unstemmed and with each available stemmer, since
 	// the reader's query language is not known.
 	public static final String SEARCH = """
@@ -58,7 +71,7 @@ public class ReaderRepository {
 				SELECT a.id, a.title, a.excerpt, a.canonical_url, a.language, a.published_at,
 				       a.publisher_updated_at, a.first_ingested_at, a.sort_at,
 				       s.code AS source_code, s.name AS source_name, s.homepage_url,
-				""").append(CATEGORIES).append(" FROM article a ").append(VISIBLE).append(" WHERE TRUE ");
+				""").append(CATEGORIES).append(", ").append(IMAGE).append(" FROM article a ").append(VISIBLE).append(" WHERE TRUE ");
 		MapSqlParameterSource p = new MapSqlParameterSource("now", utc(now)).addValue("limit", limit);
 
 		if (!query.languages().isEmpty()) {
@@ -106,7 +119,7 @@ public class ReaderRepository {
 				SELECT a.id, a.title, a.excerpt, a.author, a.canonical_url, a.language, a.published_at,
 				       a.publisher_updated_at, a.first_ingested_at, a.last_ingested_at, a.publisher_categories,
 				       a.source_id, s.code AS source_code, s.name AS source_name, s.homepage_url,
-				""" + CATEGORIES + " FROM article a " + VISIBLE + " WHERE a.id = :id";
+				""" + CATEGORIES + ", " + IMAGE + " FROM article a " + VISIBLE + " WHERE a.id = :id";
 		MapSqlParameterSource p = new MapSqlParameterSource("now", utc(now)).addValue("id", id);
 		return jdbc.query(sql, p, (rs, n) -> {
 			String language = rs.getString("language");
@@ -114,7 +127,8 @@ public class ReaderRepository {
 					rs.getString("author"), publisher(rs), rs.getString("canonical_url"), language,
 					ReaderDtos.direction(language), instant(rs, "published_at"), instant(rs, "publisher_updated_at"),
 					instant(rs, "first_ingested_at"), instant(rs, "last_ingested_at"), strings(rs, "categories"),
-					strings(rs, "publisher_categories"), FullTextStatus.NOT_PERMITTED, null, false, List.of());
+					strings(rs, "publisher_categories"), FullTextStatus.NOT_PERMITTED, null, false, List.of(),
+					rs.getString("image_url"));
 			return new DetailRow(rs.getLong("source_id"), detail);
 		}).stream().findFirst();
 	}
@@ -149,7 +163,8 @@ public class ReaderRepository {
 		String language = rs.getString("language");
 		return new ArticleSummary(rs.getLong("id"), rs.getString("title"), rs.getString("excerpt"), publisher(rs),
 				rs.getString("canonical_url"), language, ReaderDtos.direction(language), instant(rs, "published_at"),
-				instant(rs, "publisher_updated_at"), instant(rs, "first_ingested_at"), strings(rs, "categories"));
+				instant(rs, "publisher_updated_at"), instant(rs, "first_ingested_at"), strings(rs, "categories"),
+				rs.getString("image_url"));
 	}
 
 	private static Publisher publisher(ResultSet rs) throws SQLException {

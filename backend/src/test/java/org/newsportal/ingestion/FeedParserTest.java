@@ -87,6 +87,39 @@ class FeedParserTest {
 	}
 
 	@Test
+	void picksAnHttpsLeadImage() throws Exception {
+		ParsedFeed feed = parser.parse(bytes("""
+				<?xml version="1.0" encoding="UTF-8"?>
+				<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+				  <channel>
+				    <title>Example</title><link>https://example.org/</link><description>d</description>
+				    <item>
+				      <title>Thumbnail wins</title><link>https://example.org/a</link>
+				      <media:content url="https://cdn.example.org/big.jpg" medium="image"/>
+				      <media:thumbnail url="https://cdn.example.org/thumb.jpg"/>
+				    </item>
+				    <item>
+				      <title>Grouped image</title><link>https://example.org/b</link>
+				      <media:group><media:content url="https://cdn.example.org/g.png" type="image/png"/></media:group>
+				    </item>
+				    <item>
+				      <title>Enclosure</title><link>https://example.org/c</link>
+				      <enclosure url="https://cdn.example.org/e.webp" type="image/webp" length="1"/>
+				    </item>
+				    <item>
+				      <title>Plain HTTP is ignored</title><link>https://example.org/d</link>
+				      <media:thumbnail url="http://cdn.example.org/insecure.jpg"/>
+				    </item>
+				  </channel>
+				</rss>
+				"""));
+
+		assertThat(feed.entries()).extracting(FeedEntry::imageUrl).containsExactly(
+				"https://cdn.example.org/thumb.jpg", "https://cdn.example.org/g.png", "https://cdn.example.org/e.webp",
+				null);
+	}
+
+	@Test
 	void parsesAtom() throws Exception {
 		ParsedFeed feed = parser.parse(bytes("""
 				<?xml version="1.0" encoding="utf-8"?>

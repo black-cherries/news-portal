@@ -18,6 +18,8 @@ export interface ArticleSummary {
   publisherUpdatedAt: string | null
   ingestedAt: string
   categories: string[]
+  /** Publisher's lead image (HTTPS). Present only while the IMAGE permission is valid. */
+  imageUrl?: string | null
 }
 
 export interface ArticlePage {

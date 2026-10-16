@@ -76,6 +76,9 @@ public class ArticleUpsertService {
 		changed |= syncContent(article.getId(), entry.contentHtml(), storeContent, now);
 		categories.assign(article.getId(), sourceId, entry.categories());
 		changed |= syncVideos(article.getId(), entry.videos());
+		// Only the link; shown while the IMAGE permission is valid.
+		changed |= jdbc.update("UPDATE article SET image_url = ? WHERE id = ? AND image_url IS DISTINCT FROM ?",
+				entry.imageUrl(), article.getId(), entry.imageUrl()) > 0;
 
 		if (created) {
 			return Result.CREATED;

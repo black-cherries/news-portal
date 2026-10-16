@@ -240,13 +240,16 @@ The feed is ordered by publication time. Two exceptions:
     "publishedAt": "2026-02-21T09:00:00Z",
     "publisherUpdatedAt": null,
     "ingestedAt": "2026-02-21T09:05:00Z",
-    "categories": ["politics"]
+    "categories": ["politics"],
+    "imageUrl": "https://cdn.publisher.example/lead.jpg"
   }],
   "nextCursor": "MjAyNi0w…"
 }
 ```
 
 `publishedAt` and `publisherUpdatedAt` are what the publisher reported, and are `null` when unknown. `ingestedAt` is when this app first stored the article (FR-022). `nextCursor` is `null` on the last page.
+
+`imageUrl` is the publisher's lead image from the feed: `media:thumbnail`, an image `media:content` or an image enclosure, HTTPS only. It is present only while the publisher's `IMAGE` permission is valid, and `null` otherwise. Only the link is stored. The web app loads images from the publisher's server without a referrer. `GET /articles/{id}` returns the same field.
 
 ## GET /articles/offline-status?ids=1,2,3
 

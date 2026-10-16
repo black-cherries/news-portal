@@ -56,7 +56,63 @@ public class FeedParser {
 			.toList();
 		return new FeedEntry(blankToNull(e.getUri()), blankToNull(e.getLink()), e.getTitle(), description, content,
 				blankToNull(e.getAuthor()), toInstant(e.getPublishedDate()), toInstant(e.getUpdatedDate()),
-				categories, videos(e));
+				categories, videos(e), image(e));
+	}
+
+	/**
+	 * The entry's lead image: {@code media:thumbnail}, then an image
+	 * {@code media:content} (also inside {@code media:group}), then an image
+	 * enclosure. HTTPS only, so pages never load mixed content. Shown only
+	 * where the publisher grants the IMAGE permission.
+	 */
+	static String image(SyndEntry e) {
+		String thumbnail = null;
+		String content = null;
+		for (Element element : e.getForeignMarkup()) {
+			for (Element m : mediaElements(element)) {
+				String url = httpsUrl(m.getAttributeValue("url"));
+				if (url == null) {
+					continue;
+				}
+				if (thumbnail == null && m.getName().equals("thumbnail")) {
+					thumbnail = url;
+				}
+				String type = m.getAttributeValue("type");
+				boolean isImage = "image".equalsIgnoreCase(m.getAttributeValue("medium"))
+						|| (type != null && type.toLowerCase(Locale.ROOT).startsWith("image/"));
+				if (content == null && m.getName().equals("content") && isImage) {
+					content = url;
+				}
+			}
+		}
+		if (thumbnail != null) {
+			return thumbnail;
+		}
+		if (content != null) {
+			return content;
+		}
+		return e.getEnclosures().stream()
+			.filter(enc -> enc.getType() != null && enc.getType().toLowerCase(Locale.ROOT).startsWith("image/"))
+			.map(enc -> httpsUrl(enc.getUrl()))
+			.filter(u -> u != null)
+			.findFirst()
+			.orElse(null);
+	}
+
+	/** The element itself and, for media:group, its children; Media RSS only. */
+	private static List<Element> mediaElements(Element element) {
+		if (!MEDIA_RSS.equals(element.getNamespaceURI())) {
+			return List.of();
+		}
+		if (element.getName().equals("group")) {
+			return element.getChildren().stream().filter(c -> MEDIA_RSS.equals(c.getNamespaceURI())).toList();
+		}
+		return List.of(element);
+	}
+
+	private static String httpsUrl(String raw) {
+		String url = blankToNull(raw);
+		return (url != null && url.length() <= 2000 && url.matches("(?i)^https://\\S+$")) ? url : null;
 	}
 
 	/**
@@ -135,16 +191,25 @@ public class FeedParser {
 
 	/** One entry as the publisher supplied it. Times are null when the feed does not give them (FR-022). */
 	public record FeedEntry(String guid, String link, String title, String descriptionHtml, String contentHtml,
-			String author, Instant publishedAt, Instant updatedAt, List<String> categories, List<FeedVideo> videos) {
+			String author, Instant publishedAt, Instant updatedAt, List<String> categories, List<FeedVideo> videos,
+			String imageUrl) {
 
 		public FeedEntry {
 			videos = (videos == null) ? List.of() : List.copyOf(videos);
 		}
 
-		/** An entry without videos. */
+		/** An entry without videos or image. */
 		public FeedEntry(String guid, String link, String title, String descriptionHtml, String contentHtml,
 				String author, Instant publishedAt, Instant updatedAt, List<String> categories) {
-			this(guid, link, title, descriptionHtml, contentHtml, author, publishedAt, updatedAt, categories, List.of());
+			this(guid, link, title, descriptionHtml, contentHtml, author, publishedAt, updatedAt, categories, List.of(),
+					null);
+		}
+
+		/** An entry without an image. */
+		public FeedEntry(String guid, String link, String title, String descriptionHtml, String contentHtml,
+				String author, Instant publishedAt, Instant updatedAt, List<String> categories, List<FeedVideo> videos) {
+			this(guid, link, title, descriptionHtml, contentHtml, author, publishedAt, updatedAt, categories, videos,
+					null);
 		}
 
 	}

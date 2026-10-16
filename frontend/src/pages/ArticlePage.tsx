@@ -101,9 +101,15 @@ export function ArticlePage() {
         </p>
       )}
       <header>
+        {article.categories.length > 0 && <p className="kicker">{categoryName(article.categories[0])}</p>}
         <h1 lang={article.language} dir={article.direction}>
           {article.title}
         </h1>
+        {article.excerpt && bodyHtml && (
+          <p className="standfirst" lang={article.language} dir={article.direction}>
+            {article.excerpt}
+          </p>
+        )}
         <p className="attribution">
           {t('article.attribution', { publisher })}{' '}
           <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer">
@@ -121,12 +127,29 @@ export function ArticlePage() {
           publisherUpdatedAt={article.publisherUpdatedAt}
           ingestedAt={article.ingestedAt}
         />
-        {article.categories.length > 0 && (
-          <p>
+        {article.categories.length > 1 && (
+          <p className="hint">
             {t('article.categories')}: {article.categories.map(categoryName).join(', ')}
           </p>
         )}
       </header>
+
+      {article.imageUrl && !offline && (
+        <figure className="hero">
+          <img
+            src={article.imageUrl}
+            alt=""
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              // Hide the figure and its credit if the publisher's image fails to load.
+              const figure = e.currentTarget.parentElement
+              if (figure) figure.hidden = true
+            }}
+          />
+          <figcaption>{t('article.imageCredit', { publisher })}</figcaption>
+        </figure>
+      )}
 
       <div className="article-tools">
         <ListenButton

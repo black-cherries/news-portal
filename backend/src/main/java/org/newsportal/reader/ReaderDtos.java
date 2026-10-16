@@ -18,7 +18,7 @@ public final class ReaderDtos {
 	 */
 	public record ArticleSummary(long id, String title, String excerpt, Publisher publisher, String sourceUrl,
 			String language, String direction, Instant publishedAt, Instant publisherUpdatedAt, Instant ingestedAt,
-			List<String> categories) {
+			List<String> categories, String imageUrl) {
 	}
 
 	public record ArticlePage(List<ArticleSummary> items, String nextCursor) {
@@ -41,7 +41,7 @@ public final class ReaderDtos {
 			String sourceUrl, String language, String direction, Instant publishedAt, Instant publisherUpdatedAt,
 			Instant ingestedAt, Instant lastSeenAt, List<String> categories, List<String> publisherCategories,
 			FullTextStatus fullTextStatus, String fullTextHtml, boolean fullTextNarrationPermitted,
-			List<Video> videos) {
+			List<Video> videos, String imageUrl) {
 	}
 
 	/**

@@ -9,6 +9,7 @@ export const CONTENT_USES = [
   'NARRATION',
   'VIDEO_EMBED',
   'GENERATED_MEDIA',
+  'IMAGE',
 ] as const
 export type ContentUse = (typeof CONTENT_USES)[number]
 export type RightsStatus = 'UNKNOWN' | 'PERMITTED' | 'DENIED' | 'DISPUTED'

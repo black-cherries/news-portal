@@ -13,6 +13,8 @@ interface I18n {
   formatDateTime: (iso: string) => string
   /** Storage sizes such as "1.2 MB", in the interface language. */
   formatBytes: (bytes: number) => string
+  /** "12 minutes ago"; falls back to the full date after a week. */
+  formatRelative: (iso: string) => string
   categoryName: (code: string) => string
 }
 
@@ -25,8 +27,8 @@ function initialLang(): Lang {
   } catch {
     // Storage can be unavailable (private mode); fall back below.
   }
-  const browser = navigator.language?.slice(0, 2)
-  return isLang(browser) ? browser : 'en'
+  // English until the reader chooses another language (owner decision, 2026-10-16).
+  return 'en'
 }
 
 export function I18nProvider({ children, initial }: { children: ReactNode; initial?: Lang }) {
@@ -64,6 +66,15 @@ export function I18nProvider({ children, initial }: { children: ReactNode; initi
       setLang,
       t,
       formatDateTime: (iso: string) => formatter.format(new Date(iso)),
+      formatRelative: (iso: string) => {
+        const seconds = (Date.parse(iso) - Date.now()) / 1000
+        const abs = Math.abs(seconds)
+        if (abs >= 7 * 86400) return formatter.format(new Date(iso))
+        const rtf = new Intl.RelativeTimeFormat(LOCALES[lang], { numeric: 'auto', style: 'short' })
+        if (abs < 3600) return rtf.format(Math.round(seconds / 60), 'minute')
+        if (abs < 86400) return rtf.format(Math.round(seconds / 3600), 'hour')
+        return rtf.format(Math.round(seconds / 86400), 'day')
+      },
       formatBytes: (bytes: number) => {
         const [unit, n] = bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', Math.max(bytes, 1) / 1e3]
         return new Intl.NumberFormat(LOCALES[lang], { style: 'unit', unit, maximumFractionDigits: 1 }).format(n)

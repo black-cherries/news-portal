@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.newsportal.TestClockConfig.MutableClock;
 import org.newsportal.TestMailConfig.CapturingMailGateway;
 import org.newsportal.identity.AccountService;
+import org.newsportal.source.ContentUse;
 import org.newsportal.identity.RateLimiter;
 import org.newsportal.ingestion.StubFeedServer;
 import org.newsportal.ingestion.StubFeedServer.Response;
@@ -126,7 +127,7 @@ class AdminApiTest {
 		long id = ((Number) JsonPath.read(send(post("/api/v1/admin/sources"), manager, newSourceJson(code))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.status").value("PROPOSED"))
-			.andExpect(jsonPath("$.rights", hasSize(8)))
+			.andExpect(jsonPath("$.rights", hasSize(ContentUse.values().length)))
 			.andExpect(jsonPath("$.rights[0].reason").value("SOURCE_NOT_ACTIVE"))
 			.andReturn().getResponse().getContentAsString(), "$.id")).longValue();
 

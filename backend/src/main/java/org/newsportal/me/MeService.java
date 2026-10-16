@@ -53,7 +53,7 @@ public class MeService {
 	private static final String ARTICLE_COLUMNS = """
 			a.id, a.title, a.excerpt, a.canonical_url, a.language, a.published_at, a.publisher_updated_at,
 			a.first_ingested_at, s.code AS source_code, s.name AS source_name, s.homepage_url,
-			""" + ReaderRepository.CATEGORIES;
+			""" + ReaderRepository.CATEGORIES + ", " + ReaderRepository.IMAGE;
 
 	private final NamedParameterJdbcTemplate jdbc;
 

@@ -80,11 +80,17 @@ Hibernate never changes the schema (`ddl-auto: validate`). Only Flyway does.
 
 ## Frontend languages
 
+The interface starts in English. It switches only when the reader picks another language in the header, and that choice is remembered. The home page shows news in the interface language first; chips switch to another language or to all of them.
+
 - Interface text is in `frontend/src/i18n/messages.ts`. The Hindi, Urdu and Arabic strings are drafts and need a native-speaker review before the pilot.
 - A test fails if any language is missing a key or a `{placeholder}`.
 - Urdu and Arabic switch the whole page to right-to-left.
 - Article text always carries its own `lang` and `dir`, so mixed-language pages render correctly.
 - The Urdu Nastaliq font is self-hosted, so no third-party font requests are made.
+
+## Images
+
+Lead images from publisher feeds appear on cards and article pages only where the publisher has the `IMAGE` permission (Staff console → publisher → rights). Images load straight from the publisher's server, over HTTPS and without a referrer.
 
 ## Videos
 

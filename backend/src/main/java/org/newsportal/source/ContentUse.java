@@ -9,5 +9,7 @@ public enum ContentUse {
 	SUMMARY,
 	NARRATION,
 	VIDEO_EMBED,
-	GENERATED_MEDIA
+	GENERATED_MEDIA,
+	/** Showing the publisher's lead image, loaded from their server. */
+	IMAGE
 }

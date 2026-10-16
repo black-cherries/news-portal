@@ -48,10 +48,10 @@ export function ForYouPage() {
         {others && others.items.length > 0 && (
           <aside aria-labelledby="other-languages">
             <h2 id="other-languages">{t('feed.otherLanguages')}</h2>
-            <ul className="card-list compact">
+            <ul className="card-list">
               {others.items.map((a) => (
                 <li key={a.id}>
-                  <ArticleCard article={a} />
+                  <ArticleCard article={a} variant="compact" />
                 </li>
               ))}
             </ul>

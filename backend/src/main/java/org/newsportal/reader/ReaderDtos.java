@@ -41,7 +41,7 @@ public final class ReaderDtos {
 			String sourceUrl, String language, String direction, Instant publishedAt, Instant publisherUpdatedAt,
 			Instant ingestedAt, Instant lastSeenAt, List<String> categories, List<String> publisherCategories,
 			FullTextStatus fullTextStatus, String fullTextHtml, boolean fullTextNarrationPermitted,
-			List<Video> videos, String imageUrl) {
+			List<Video> videos, String imageUrl, boolean translationAvailable) {
 	}
 
 	/**

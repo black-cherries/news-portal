@@ -17,6 +17,7 @@ import org.newsportal.reader.ReaderRepository.DetailRow;
 import org.newsportal.reader.ReaderRepository.Row;
 import org.newsportal.source.ContentUse;
 import org.newsportal.source.SourceRightsService;
+import org.newsportal.translate.TranslationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +31,16 @@ public class ReaderService {
 
 	private final SourceRightsService rights;
 
+	private final TranslationService translations;
+
 	private final Clock clock;
 
 	public ReaderService(ReaderRepository repository, ArticleContentRepository contents, SourceRightsService rights,
-			Clock clock) {
+			TranslationService translations, Clock clock) {
 		this.repository = repository;
 		this.contents = contents;
 		this.rights = rights;
+		this.translations = translations;
 		this.clock = clock;
 	}
 
@@ -66,7 +70,7 @@ public class ReaderService {
 			return new ArticleDetail(d.id(), d.title(), d.excerpt(), d.author(), d.publisher(), d.sourceUrl(),
 					d.language(), d.direction(), d.publishedAt(), d.publisherUpdatedAt(), d.ingestedAt(),
 					d.lastSeenAt(), d.categories(), d.publisherCategories(), d.fullTextStatus(), null, false, videos,
-					d.imageUrl());
+					d.imageUrl(), translations.available(row.sourceId()));
 		}
 		Optional<String> body = contents.findById(d.id()).map(ArticleContent::getBodyHtml);
 		FullTextStatus status = body.isPresent() ? FullTextStatus.AVAILABLE : FullTextStatus.NOT_PROVIDED;
@@ -74,7 +78,8 @@ public class ReaderService {
 		boolean narrate = body.isPresent() && rights.check(row.sourceId(), ContentUse.NARRATION).allowed();
 		return new ArticleDetail(d.id(), d.title(), d.excerpt(), d.author(), d.publisher(), d.sourceUrl(),
 				d.language(), d.direction(), d.publishedAt(), d.publisherUpdatedAt(), d.ingestedAt(), d.lastSeenAt(),
-				d.categories(), d.publisherCategories(), status, body.orElse(null), narrate, videos, d.imageUrl());
+				d.categories(), d.publisherCategories(), status, body.orElse(null), narrate, videos, d.imageUrl(),
+				translations.available(row.sourceId()));
 	}
 
 	/** FR-056: an embed only where VIDEO_EMBED is permitted right now; otherwise a link to the original. */

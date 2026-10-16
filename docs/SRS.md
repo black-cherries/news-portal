@@ -642,6 +642,30 @@ These should be resolved only when necessary for the relevant design or implemen
 
 This document is the approved baseline for the multilingual news platform.
 
-**Approval record:** Approved by the project owner on 2026-10-16, including the Spring AI amendment (§6, §8, §18). Phase 1 implementation is authorized.
+**Approval record:** Approved by the project owner on 2026-10-16, including the Spring AI amendment (§6, §8, §18). Phase 1 implementation is authorized. Amendment 2 (§20) was decided by the project owner on 2026-10-16.
 
 Implementation shall proceed in small, verifiable steps with expected outcomes, tests and rollback guidance.
+
+# 20. Amendments after approval
+
+## Amendment 2: English default, on-demand translation, images and redesign (2026-10-16)
+
+Decided by the project owner on 2026-10-16, after Phase 1 was delivered.
+
+1. **Interface language.** The interface starts in English, whatever the browser language. Other interface languages apply only when the reader chooses one, and that choice is remembered. This refines FR-045.
+2. **On-demand translation.** This brings forward part of Phase 3 (§3.2, §17).
+   - Readers can ask for an article to be machine-translated into English, Hindi, Urdu or Arabic.
+   - Translation uses Claude through Spring AI (Spring AI 2.0.1, built against Spring Boot 4.1.1) and is called only from Java.
+   - It requires the publisher's `TRANSLATION` permission (FR-004, FR-005).
+   - The article body is translated and shown only while full-text display is also permitted. Otherwise only the headline and summary are.
+   - Every translation is labelled as a machine translation, names the original language and links to the original.
+   - Translations are cached per article and language. A changed original, or a change in what may be translated, produces a new translation.
+   - Only signed-in readers can ask for new translations. Anyone can read an existing one.
+   - Limits per reader and per day control the cost.
+   - The core app keeps working when no model is configured (§9: "useful when no AI model is installed or available").
+   - Human review and multilingual quality evaluation (Phase 3) are still to come; until then, machine translations carry the notice.
+3. **Publisher images.**
+   - A new content use, `IMAGE`, is added to FR-004.
+   - Lead images from feeds are shown only while it is permitted.
+   - Only the image link is stored. Images load from the publisher's server, over HTTPS and without a referrer.
+4. **Visual design.** The reader interface uses a modern app-style design, with the accessibility, right-to-left and privacy requirements unchanged.

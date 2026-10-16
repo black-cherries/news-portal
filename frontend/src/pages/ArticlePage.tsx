@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { ApiError, api } from '../api/client'
-import type { ArticleDetail } from '../api/types'
+import type { ArticleDetail, Translation } from '../api/types'
 import { useAuth } from '../auth/AuthProvider'
 import { DownloadButton } from '../components/DownloadButton'
 import { ListenButton } from '../components/ListenButton'
+import { TranslateBar } from '../components/TranslateBar'
 import { VideoList } from '../components/VideoList'
 import { isUsable, removeDownload } from '../offline/downloads'
 import { offlineStore, type OfflineArticle } from '../offline/store'
@@ -67,10 +68,19 @@ export function ArticlePage() {
     }
   }, [article, isReader, offline])
 
-  const bodyHtml = useMemo(
+  const originalBody = useMemo(
     () => (article?.fullTextStatus === 'AVAILABLE' && article.fullTextHtml ? sanitize(article.fullTextHtml) : null),
     [article],
   )
+
+  // A machine translation shown in place of the original (SRS amendment 2).
+  const [translated, setTranslated] = useState<{ id: number; value: Translation } | null>(null)
+  const translation = article && translated?.id === article.id ? translated.value : null
+  const translatedBody = useMemo(
+    () => (translation?.bodyHtml ? sanitize(translation.bodyHtml) : null),
+    [translation],
+  )
+  const bodyHtml = translation ? translatedBody : originalBody
 
   if (error === 'notFound') {
     return (
@@ -92,6 +102,9 @@ export function ArticlePage() {
     ? `${article.title}. ${plainText(article.fullTextHtml ?? '')}`
     : [article.title, article.excerpt].filter(Boolean).join('. ')
   const publisher = article.publisher.name
+  const shown = translation
+    ? { title: translation.title, excerpt: translation.excerpt, lang: translation.language, dir: translation.direction }
+    : { title: article.title, excerpt: article.excerpt, lang: article.language, dir: article.direction }
 
   return (
     <article className="article">
@@ -102,12 +115,12 @@ export function ArticlePage() {
       )}
       <header>
         {article.categories.length > 0 && <p className="kicker">{categoryName(article.categories[0])}</p>}
-        <h1 lang={article.language} dir={article.direction}>
-          {article.title}
+        <h1 lang={shown.lang} dir={shown.dir}>
+          {shown.title}
         </h1>
-        {article.excerpt && bodyHtml && (
-          <p className="standfirst" lang={article.language} dir={article.direction}>
-            {article.excerpt}
+        {shown.excerpt && bodyHtml && (
+          <p className="standfirst" lang={shown.lang} dir={shown.dir}>
+            {shown.excerpt}
           </p>
         )}
         <p className="attribution">
@@ -164,20 +177,32 @@ export function ArticlePage() {
         {!offline && <DownloadButton articleId={article.id} />}
       </div>
 
-      {article.excerpt && !bodyHtml && (
-        <p className="lead" lang={article.language} dir={article.direction}>
-          {article.excerpt}
+      {!offline && (
+        <TranslateBar
+          article={article}
+          translation={translation}
+          onChange={(value) => setTranslated(value ? { id: article.id, value } : null)}
+        />
+      )}
+
+      {shown.excerpt && !bodyHtml && (
+        <p className="lead" lang={shown.lang} dir={shown.dir}>
+          {shown.excerpt}
         </p>
+      )}
+
+      {translation && !translation.bodyHtml && originalBody && (
+        <p className="hint">{t('translate.headlineOnly')}</p>
       )}
 
       {bodyHtml ? (
         <div
           className="article-body"
-          lang={article.language}
-          dir={article.direction}
+          lang={shown.lang}
+          dir={shown.dir}
           dangerouslySetInnerHTML={{ __html: bodyHtml }}
         />
-      ) : (
+      ) : translation && originalBody ? null : (
         <p className="notice">
           {offline?.level === 'METADATA'
             ? t('offline.metadataOnly')

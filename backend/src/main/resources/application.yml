@@ -66,6 +66,15 @@ newsportal:
     # FR-055: list of purged user ids kept outside the database. Store it
     # where database restores do not overwrite it, and include it in backups.
     deletion-ledger-file: ${DELETION_LEDGER_FILE:../data/deletion-ledger.txt}
+  translation:
+    # On-demand machine translation with Claude (SRS amendment 2). Off when the key is empty.
+    api-key: ${ANTHROPIC_API_KEY:}
+    model: ${TRANSLATION_MODEL:claude-sonnet-5-5}
+    timeout: PT90S
+    # Cost limits.
+    max-per-day: ${TRANSLATION_MAX_PER_DAY:300}
+    max-per-reader-per-hour: ${TRANSLATION_MAX_PER_READER_PER_HOUR:20}
+    max-body-chars: 30000
   notifications:
     # Digests and breaking-news alerts (FR-065..FR-067).
     jobs-enabled: ${NOTIFICATION_JOBS_ENABLED:true}

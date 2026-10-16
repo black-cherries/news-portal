@@ -1160,3 +1160,28 @@ thead th {
     transform: none;
   }
 }
+
+/* ---------- Translation (SRS amendment 2) ---------- */
+
+.translate-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-block: 0 1.25rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-lg);
+  background: var(--accent-soft);
+}
+
+.translate-bar label {
+  font-weight: 600;
+}
+
+.translate-bar select {
+  border-radius: 999px;
+}
+
+.translate-bar.translated {
+  justify-content: space-between;
+}

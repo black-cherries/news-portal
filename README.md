@@ -88,6 +88,15 @@ The interface starts in English. It switches only when the reader picks another 
 - Article text always carries its own `lang` and `dir`, so mixed-language pages render correctly.
 - The Urdu Nastaliq font is self-hosted, so no third-party font requests are made.
 
+## Translation (Claude via Spring AI)
+
+Readers can translate an article into English, Hindi, Urdu or Arabic from the article page ("Read in … · Translate"). This is a machine translation and is labelled as one.
+
+- **Turn it on:** put `ANTHROPIC_API_KEY=…` in `.env` (git-ignored) and restart the backend. Without a key, translation is off and the rest of the app works as before.
+- **Publisher permission:** a publisher's articles can be translated only when it has the `TRANSLATION` permission. The body is translated only where full-text display is also allowed.
+- **Cost:** each article is translated once per language and then cached. Only signed-in readers can start a new translation. There are limits per reader per hour and per day across the app: `TRANSLATION_MAX_PER_READER_PER_HOUR` and `TRANSLATION_MAX_PER_DAY`.
+- **Model:** `TRANSLATION_MODEL` sets the model; the default is `claude-sonnet-5-5`.
+
 ## Images
 
 Lead images from publisher feeds appear on cards and article pages only where the publisher has the `IMAGE` permission (Staff console → publisher → rights). Images load straight from the publisher's server, over HTTPS and without a referrer.

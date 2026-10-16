@@ -128,7 +128,7 @@ public class ReaderRepository {
 					ReaderDtos.direction(language), instant(rs, "published_at"), instant(rs, "publisher_updated_at"),
 					instant(rs, "first_ingested_at"), instant(rs, "last_ingested_at"), strings(rs, "categories"),
 					strings(rs, "publisher_categories"), FullTextStatus.NOT_PERMITTED, null, false, List.of(),
-					rs.getString("image_url"));
+					rs.getString("image_url"), false);
 			return new DetailRow(rs.getLong("source_id"), detail);
 		}).stream().findFirst();
 	}

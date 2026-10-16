@@ -37,6 +37,22 @@ export interface ArticleDetail extends ArticleSummary {
   fullTextHtml: string | null
   fullTextNarrationPermitted: boolean
   videos: Video[]
+  /** The publisher allows translation and the translation service is on. */
+  translationAvailable?: boolean
+}
+
+/** A machine translation of an article (SRS amendment 2). */
+export interface Translation {
+  articleId: number
+  sourceLanguage: string
+  language: string
+  direction: 'ltr' | 'rtl'
+  title: string
+  excerpt: string | null
+  bodyHtml: string | null
+  machineTranslated: boolean
+  model: string
+  translatedAt: string
 }
 
 /**

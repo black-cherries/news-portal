@@ -25,6 +25,11 @@ newsportal:
     # Tests trigger the purge directly.
     purge-enabled: false
     deletion-ledger-file: target/test-deletion-ledger.txt
+  translation:
+    # Never call the real API from tests; TestTranslatorConfig supplies a fake.
+    api-key: ""
+    max-per-day: 5
+    max-per-reader-per-hour: 3
   notifications:
     # Tests run the senders directly.
     jobs-enabled: false

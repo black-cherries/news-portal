@@ -251,6 +251,32 @@ The feed is ordered by publication time. Two exceptions:
 
 `imageUrl` is the publisher's lead image from the feed: `media:thumbnail`, an image `media:content` or an image enclosure, HTTPS only. It is present only while the publisher's `IMAGE` permission is valid, and `null` otherwise. Only the link is stored. The web app loads images from the publisher's server without a referrer. `GET /articles/{id}` returns the same field.
 
+## Translations (SRS §20)
+
+| Endpoint | Who | Notes |
+|---|---|---|
+| `GET /articles/{id}/translations/{language}` | Anyone | A cached translation, or `404` if there isn't a current one |
+| `POST /articles/{id}/translations/{language}` | Reader | Returns the cached translation, or makes a new one with Claude |
+
+`language` is `en`, `hi`, `ur` or `ar`. The response looks like this:
+
+```json
+{ "articleId": 7, "sourceLanguage": "en", "language": "ur", "direction": "rtl",
+  "title": "…", "excerpt": "…", "bodyHtml": "<p>…</p>",
+  "machineTranslated": true, "model": "claude-sonnet-5-5", "translatedAt": "…" }
+```
+
+- **Rights:** needs the publisher's `TRANSLATION` permission, checked every time. `bodyHtml` is translated and returned only while `FULL_TEXT_DISPLAY` is also permitted, and only for bodies up to 30,000 characters; otherwise it is `null`. `GET /articles/{id}` includes `translationAvailable`.
+- **Caching:** one translation per article and language. A changed original, or a change in what may be translated, gives a new one.
+- **Safety:** article text is sent as content, never as instructions. The model's output is cleaned like publisher HTML: plain text for title and summary, a basic safelist for the body.
+- **Errors:**
+  - `400`: same language, or an unknown language.
+  - `403`: translation not permitted.
+  - `404`: the article is not shown.
+  - `429`: a limit was reached, either `TRANSLATION_MAX_PER_READER_PER_HOUR` (default 20) or `TRANSLATION_MAX_PER_DAY` across the app (default 300).
+  - `502`: the model failed or answered in an unusable form.
+  - `503`: translation is off because no `ANTHROPIC_API_KEY` is set.
+
 ## GET /articles/offline-status?ids=1,2,3
 
 Tells a device what it may keep for offline reading (FR-061, FR-063, FR-064). Public, because guests can download too. At most 200 IDs.

@@ -72,8 +72,10 @@ public class SecurityConfig {
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/error", "/api/v1/health", "/actuator/health/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/v1/articles", "/api/v1/articles/*", "/api/v1/categories",
-						"/api/v1/publishers", "/api/v1/auth/csrf")
+						"/api/v1/publishers", "/api/v1/auth/csrf", "/api/v1/articles/*/translations/*")
 				.permitAll()
+				// New translations cost money: signed-in readers only.
+				.requestMatchers(HttpMethod.POST, "/api/v1/articles/*/translations/*").hasRole("READER")
 				.requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/verify-email",
 						"/api/v1/auth/resend-verification", "/api/v1/auth/login", "/api/v1/auth/account/restore",
 						"/api/v1/auth/password-reset/request", "/api/v1/auth/password-reset/confirm",

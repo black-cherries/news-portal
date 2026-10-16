@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fictional demo content for local development. Not real news. -->
+<rss version="2.0">
+  <channel>
+    <title>ڈیمو اردو نیوز</title>
+    <link>https://ur.demo.invalid/</link>
+    <description>مقامی جانچ کے لیے فرضی ڈیمو فیڈ۔ یہ اصل خبر نہیں ہے۔</description>
+    <language>ur-PK</language>
+    <item>
+      <title>شہر میں نئے پارک کا افتتاح</title>
+      <link>https://ur.demo.invalid/news/new-park</link>
+      <guid isPermaLink="false">demo-ur-1</guid>
+      <description>ڈیمو مضمون۔ نئے پارک میں بچوں کے کھیلنے کی جگہ اور پیدل راستے شامل ہیں۔</description>
+      <category>National</category>
+      <pubDate>Thu, 15 Oct 2026 09:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>کرکٹ: قومی ٹیم کی شاندار جیت</title>
+      <link>https://ur.demo.invalid/sport/big-win</link>
+      <guid isPermaLink="false">demo-ur-2</guid>
+      <description>ڈیمو مضمون۔ ٹیم نے آخری اوور میں میچ جیت لیا۔</description>
+      <category>Cricket</category>
+      <pubDate>Thu, 15 Oct 2026 16:20:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>تعلیمی اداروں میں نئی ڈیجیٹل لائبریری</title>
+      <link>https://ur.demo.invalid/education/digital-library</link>
+      <guid isPermaLink="false">demo-ur-3</guid>
+      <description>ڈیمو مضمون۔ طلبہ اب ہزاروں کتابیں آن لائن پڑھ سکیں گے۔</description>
+      <category>Education</category>
+      <pubDate>Fri, 16 Oct 2026 04:30:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>موسم: آئندہ ہفتے بارش کا امکان</title>
+      <link>https://ur.demo.invalid/weather/rain-next-week</link>
+      <guid isPermaLink="false">demo-ur-4</guid>
+      <description>ڈیمو مضمون۔ محکمہ موسمیات کے مطابق درجہ حرارت میں کمی متوقع ہے۔</description>
+      <category>Environment</category>
+      <pubDate>Fri, 16 Oct 2026 08:10:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

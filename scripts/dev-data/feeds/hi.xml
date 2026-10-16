@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fictional demo content for local development. Not real news. -->
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>डेमो हिंदी समाचार</title>
+    <link>https://hi.demo.invalid/</link>
+    <description>स्थानीय परीक्षण के लिए काल्पनिक डेमो फ़ीड। यह असली ख़बर नहीं है।</description>
+    <language>hi-IN</language>
+    <item>
+      <title>शहर में नई मेट्रो लाइन का परीक्षण शुरू</title>
+      <link>https://hi.demo.invalid/news/metro-trial</link>
+      <guid isPermaLink="false">demo-hi-1</guid>
+      <description>डेमो लेख। नई मेट्रो लाइन पर आज से परीक्षण यात्राएँ शुरू हुईं।</description>
+      <content:encoded><![CDATA[<p>यह स्थानीय परीक्षण के लिए डेमो लेख है, असली ख़बर नहीं।</p><p>शहर की नई मेट्रो लाइन पर आज से परीक्षण यात्राएँ शुरू हो गईं। अधिकारियों के अनुसार यात्री सेवा अगले महीने शुरू हो सकती है।</p>]]></content:encoded>
+      <category>National</category>
+      <pubDate>Thu, 15 Oct 2026 07:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>किसानों के लिए नया मौसम ऐप जारी</title>
+      <link>https://hi.demo.invalid/tech/weather-app</link>
+      <guid isPermaLink="false">demo-hi-2</guid>
+      <description>डेमो लेख। ऐप हिंदी में बारिश और तापमान का पूर्वानुमान देता है।</description>
+      <category>Technology</category>
+      <pubDate>Thu, 15 Oct 2026 12:30:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>राज्य स्तरीय विज्ञान मेले में छात्रों की शानदार प्रस्तुति</title>
+      <link>https://hi.demo.invalid/education/science-fair</link>
+      <guid isPermaLink="false">demo-hi-3</guid>
+      <description>डेमो लेख। विज्ञान मेले में 200 से अधिक स्कूलों ने भाग लिया।</description>
+      <category>Education</category>
+      <pubDate>Fri, 16 Oct 2026 05:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>क्रिकेट: युवा टीम ने सीरीज़ जीती</title>
+      <link>https://hi.demo.invalid/sport/series-win</link>
+      <guid isPermaLink="false">demo-hi-4</guid>
+      <description>डेमो लेख। अंतिम मैच में टीम ने 45 रन से जीत दर्ज की।</description>
+      <category>Cricket</category>
+      <pubDate>Fri, 16 Oct 2026 07:45:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

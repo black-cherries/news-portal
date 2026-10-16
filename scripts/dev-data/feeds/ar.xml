@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fictional demo content for local development. Not real news. -->
+<rss version="2.0">
+  <channel>
+    <title>أخبار تجريبية</title>
+    <link>https://ar.demo.invalid/</link>
+    <description>موجز تجريبي خيالي للاختبار المحلي. ليست أخبارًا حقيقية.</description>
+    <language>ar</language>
+    <item>
+      <title>افتتاح معرض الكتاب السنوي في المدينة</title>
+      <link>https://ar.demo.invalid/culture/book-fair</link>
+      <guid isPermaLink="false">demo-ar-1</guid>
+      <description>مقال تجريبي. يشارك في المعرض أكثر من 300 دار نشر.</description>
+      <category>Culture</category>
+      <pubDate>Thu, 15 Oct 2026 10:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>الأخبار الاقتصادية: انخفاض أسعار الوقود</title>
+      <link>https://ar.demo.invalid/economy/fuel-prices</link>
+      <guid isPermaLink="false">demo-ar-2</guid>
+      <description>مقال تجريبي. انخفضت الأسعار بنسبة خمسة في المئة هذا الشهر.</description>
+      <category>Economy</category>
+      <pubDate>Thu, 15 Oct 2026 13:45:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>فريق كرة القدم يفوز بالبطولة الإقليمية</title>
+      <link>https://ar.demo.invalid/sport/regional-cup</link>
+      <guid isPermaLink="false">demo-ar-3</guid>
+      <description>مقال تجريبي. سجّل الفريق هدف الفوز في الدقيقة الأخيرة.</description>
+      <category>Football</category>
+      <pubDate>Fri, 16 Oct 2026 06:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>دراسة جديدة حول صحة القلب</title>
+      <link>https://ar.demo.invalid/health/heart-study</link>
+      <guid isPermaLink="false">demo-ar-4</guid>
+      <description>مقال تجريبي. تربط الدراسة المشي اليومي بتحسّن صحة القلب.</description>
+      <category>Health</category>
+      <pubDate>Fri, 16 Oct 2026 09:30:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

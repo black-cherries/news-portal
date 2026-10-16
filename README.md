@@ -42,6 +42,29 @@ On this machine, caches live on D: because C: has little free space:
    cd frontend; npm install
    ```
 
+## Sample content for development
+
+```powershell
+.\scripts\dev-data\seed-dev.ps1
+```
+
+This loads four fictional publishers (English, Hindi, Urdu, Arabic) with 16 articles. It goes through the real admin API and feed ingestion, so it exercises the same paths as real publishers.
+
+| Publisher | Rights | What you see |
+|---|---|---|
+| `demo-en` | metadata, storage, full text, narration | Full text, read aloud in full; one invalid entry is quarantined |
+| `demo-hi` | metadata, storage, full text | Full text, but only headline and summary read aloud |
+| `demo-ur` | metadata only | Summary plus "read at source" (right-to-left) |
+| `demo-ar` | metadata only | Summary plus "read at source"; one uncategorized item |
+
+How the script works:
+- It starts and stops the backend itself, so stop any running backend first.
+- It's safe to run again: existing publishers, accounts and articles are reused.
+- It creates a dev admin and a verified dev reader. Their credentials are in `data/dev-accounts.txt` (git-ignored).
+- Feeds are disabled after loading, because the sample feed server stops with the script.
+
+All content is fictional and uses the reserved `.invalid` domain.
+
 ## Run
 
 Start the backend and the frontend in two terminals:

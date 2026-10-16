@@ -4,6 +4,7 @@ import { ApiError, api } from '../api/client'
 import type { ArticleDetail } from '../api/types'
 import { useAuth } from '../auth/AuthProvider'
 import { ListenButton } from '../components/ListenButton'
+import { ReportForm } from '../components/ReportForm'
 import { SaveControls } from '../components/SaveControls'
 import { Timestamps } from '../components/Timestamps'
 import { useI18n } from '../i18n/I18nProvider'
@@ -134,6 +135,11 @@ export function ArticlePage() {
           </a>
         </p>
       )}
+
+      <details className="report-box">
+        <summary>{t('report.open')}</summary>
+        <ReportForm articleId={article.id} />
+      </details>
     </article>
   )
 }

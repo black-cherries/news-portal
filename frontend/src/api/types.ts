@@ -72,6 +72,32 @@ export interface Collection {
   updatedAt: string
 }
 
+export const REPORT_TYPES = [
+  'TECHNICAL',
+  'BROKEN_LINK',
+  'LANGUAGE_ERROR',
+  'TRANSLATION_ISSUE',
+  'MISSING_ATTRIBUTION',
+  'SUSPECTED_DUPLICATE',
+  'MISLEADING_WORDING',
+  'CORRECTION_REQUEST',
+] as const
+export type ReportType = (typeof REPORT_TYPES)[number]
+export type ReportStatus = 'RECEIVED' | 'UNDER_REVIEW' | 'RESOLVED'
+
+export interface MyReport {
+  reference: string
+  type: ReportType
+  status: ReportStatus
+  articleId: number | null
+  articleTitle: string | null
+  description: string
+  notifyMe: boolean
+  createdAt: string
+  updatedAt: string
+  updates: { status: ReportStatus; note: string | null; at: string }[]
+}
+
 export type HistoryKind = 'READ' | 'LISTEN'
 
 export interface HistoryItem {

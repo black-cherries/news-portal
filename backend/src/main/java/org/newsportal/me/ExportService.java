@@ -68,6 +68,10 @@ public class ExportService {
 			c.remove("id");
 		}
 		out.put("collections", collections);
+		out.put("reports", rows("""
+				SELECT r.reference, r.type, r.status, r.description, r.page_url, r.created_at, r.updated_at
+				FROM report r WHERE r.reporter_user_id = :uid ORDER BY r.created_at
+				""", p));
 		out.put("history", rows("""
 				SELECT h.kind, h.last_at, a.title, a.canonical_url AS source_url
 				FROM reading_history h JOIN article a ON a.id = h.article_id

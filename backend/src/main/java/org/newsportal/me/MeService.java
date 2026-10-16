@@ -92,7 +92,7 @@ public class MeService {
 		}
 		List<String> languages = distinct(prefs.newsLanguages());
 		for (String language : languages) {
-			if (!LANGUAGES.contains(language)) {
+			if (language == null || !LANGUAGES.contains(language)) {
 				throw new IllegalArgumentException("newsLanguages must be from " + LANGUAGES);
 			}
 		}

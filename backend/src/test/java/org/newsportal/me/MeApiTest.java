@@ -118,6 +118,8 @@ class MeApiTest {
 		send(put("/api/v1/me/preferences"), me, "{\"uiLanguage\":\"fr\"}").andExpect(status().isBadRequest());
 		send(put("/api/v1/me/preferences"), me, "{\"uiLanguage\":\"en\",\"newsLanguages\":[\"de\"]}")
 			.andExpect(status().isBadRequest());
+		send(put("/api/v1/me/preferences"), me, "{\"uiLanguage\":\"en\",\"newsLanguages\":[null]}")
+			.andExpect(status().isBadRequest());
 		send(put("/api/v1/me/preferences"), me, "{\"uiLanguage\":\"en\",\"topics\":[\"gossip\"]}")
 			.andExpect(status().isBadRequest());
 	}

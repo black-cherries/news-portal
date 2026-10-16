@@ -1,0 +1,34 @@
+[
+  {
+    "code": "demo-en",
+    "name": "Demo English Times",
+    "language": "en",
+    "feed": "en.xml",
+    "uses": ["METADATA", "STORAGE", "FULL_TEXT_DISPLAY", "NARRATION"],
+    "comment": "Full text shown and read aloud."
+  },
+  {
+    "code": "demo-hi",
+    "name": "डेमो हिंदी समाचार",
+    "language": "hi",
+    "feed": "hi.xml",
+    "uses": ["METADATA", "STORAGE", "FULL_TEXT_DISPLAY"],
+    "comment": "Full text shown; only headline and summary read aloud."
+  },
+  {
+    "code": "demo-ur",
+    "name": "ڈیمو اردو نیوز",
+    "language": "ur",
+    "feed": "ur.xml",
+    "uses": ["METADATA"],
+    "comment": "Headlines and summaries only; readers are sent to the source."
+  },
+  {
+    "code": "demo-ar",
+    "name": "أخبار تجريبية",
+    "language": "ar",
+    "feed": "ar.xml",
+    "uses": ["METADATA"],
+    "comment": "Headlines and summaries only; one uncategorized item (Culture)."
+  }
+]

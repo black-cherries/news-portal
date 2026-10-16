@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fictional demo content for local development. Not real news. -->
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Demo English Times</title>
+    <link>https://en.demo.invalid/</link>
+    <description>Fictional demo feed for local testing. Not real news.</description>
+    <language>en-GB</language>
+    <item>
+      <title>City council approves new cycling lanes</title>
+      <link>https://en.demo.invalid/news/cycling-lanes?utm_source=rss</link>
+      <guid isPermaLink="false">demo-en-1</guid>
+      <description>&lt;p&gt;Demo article. The council voted to add 12 km of protected cycling lanes.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>Demo article for local testing. Not real news.</p><p>The city council voted on Tuesday to add 12 km of protected cycling lanes along the main ring road. Work is expected to begin next spring.</p><p>Residents can comment on the plans until the end of the month.</p><script>alert('this script must be removed')</script>]]></content:encoded>
+      <category>National</category>
+      <pubDate>Thu, 15 Oct 2026 08:30:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Local startup unveils low-cost water sensor</title>
+      <link>https://en.demo.invalid/tech/water-sensor</link>
+      <guid isPermaLink="false">demo-en-2</guid>
+      <description>Demo article. A small team built a sensor that checks tap water quality for under 20 dollars.</description>
+      <category>Technology</category>
+      <pubDate>Thu, 15 Oct 2026 11:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Monsoon forecast: heavier rain expected this week</title>
+      <link>https://en.demo.invalid/weather/monsoon-week</link>
+      <guid isPermaLink="false">demo-en-3</guid>
+      <description>Demo article with no publication time, to show how unknown times are displayed.</description>
+      <category>Environment</category>
+    </item>
+    <item>
+      <title>Under-19 cricket team reaches the final</title>
+      <link>https://en.demo.invalid/sport/u19-final</link>
+      <guid isPermaLink="false">demo-en-4</guid>
+      <description>Demo article. The team won its semi-final by six wickets.</description>
+      <category>Cricket</category>
+      <pubDate>Fri, 16 Oct 2026 06:15:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>This entry has no link and should be quarantined</title>
+      <guid isPermaLink="false">demo-en-bad</guid>
+      <description>Invalid on purpose.</description>
+    </item>
+  </channel>
+</rss>

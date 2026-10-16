@@ -36,6 +36,29 @@ server:
     include-message: never
 
 newsportal:
+  ops:
+    # Folder containing pg_dump/pg_restore (same major version as the server). Empty = on PATH.
+    pg-bin-dir: ${PG_BIN_DIR:}
+    backup:
+      schedule-enabled: ${BACKUP_SCHEDULE_ENABLED:true}
+      # For the pilot, point this at a different disk from the database.
+      dir: ${BACKUP_DIR:../data/backups}
+      cron: ${BACKUP_CRON:0 30 2 * * *}
+      retention-days: ${BACKUP_RETENTION_DAYS:14}
+      max-age: PT26H
+    restore-test:
+      schedule-enabled: ${RESTORE_TEST_SCHEDULE_ENABLED:true}
+      # Scratch database owned by the app's role. Never the live database.
+      db-url: ${RESTORE_TEST_DB_URL:}
+      cron: ${RESTORE_TEST_CRON:0 30 3 * * SUN}
+      max-age: P8D
+    monitor:
+      enabled: ${OPS_MONITOR_ENABLED:true}
+      interval: PT5M
+      alert-cooldown: PT6H
+      min-free-disk-mb: ${MIN_FREE_DISK_MB:2048}
+      # Comma-separated. Empty = all active system administrators.
+      alert-recipients: ${OPS_ALERT_RECIPIENTS:}
   privacy:
     # FR-052: how long a deleted account can still be restored.
     deletion-recovery-period: ${DELETION_RECOVERY_PERIOD:P7D}

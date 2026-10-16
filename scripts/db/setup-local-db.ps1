@@ -41,10 +41,10 @@ function Invoke-Psql([string]$Sql, [string]$Database = 'postgres') {
 $env:PGPASSWORD = (Get-Content $SuperuserPasswordFile -Raw).Trim()
 try {
     $databases = @(
-        @{ Name = 'newsportal_dev';  Prefix = 'DB' },
-        @{ Name = 'newsportal_test'; Prefix = 'TEST_DB' }
+        @{ Name = 'newsportal_dev';  Prefix = 'DB';      RestoreKey = 'RESTORE_TEST_DB_URL' },
+        @{ Name = 'newsportal_test'; Prefix = 'TEST_DB'; RestoreKey = 'TEST_RESTORE_DB_URL' }
     )
-    $envLines = @()
+    $envLines = @("PG_BIN_DIR=$((Split-Path $PsqlPath -Parent) -replace '\\','/')")
 
     foreach ($db in $databases) {
         $name = $db.Name
@@ -68,6 +68,16 @@ try {
         # Flyway runs as the owner role, so it must own the public schema.
         Invoke-Psql "ALTER SCHEMA public OWNER TO $name" $name | Out-Null
 
+        # Scratch database for restore tests (docs/operations.md), owned by the same role.
+        $restore = "${name}_restore"
+        if (-not (Invoke-Psql "SELECT 1 FROM pg_database WHERE datname = '$restore'")) {
+            Invoke-Psql "CREATE DATABASE $restore OWNER $name ENCODING 'UTF8' TEMPLATE template0" | Out-Null
+            Invoke-Psql "REVOKE ALL ON DATABASE $restore FROM PUBLIC" | Out-Null
+            Write-Host "Created database $restore."
+        }
+        Invoke-Psql "ALTER SCHEMA public OWNER TO $name" $restore | Out-Null
+
+        $envLines += "$($db.RestoreKey)=jdbc:postgresql://${DbHost}:$Port/$restore"
         $envLines += "$($db.Prefix)_URL=jdbc:postgresql://${DbHost}:$Port/$name"
         $envLines += "$($db.Prefix)_USERNAME=$name"
         $envLines += "$($db.Prefix)_PASSWORD=$password"

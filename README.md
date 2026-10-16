@@ -93,6 +93,18 @@ Hibernate never changes the schema (`ddl-auto: validate`). Only Flyway does.
 - Staff accounts can't be created through public registration.
 - Sessions are kept in server memory, so restarting the backend signs everyone out.
 
+## Staff console
+
+Staff accounts sign in normally, then open `/admin`. Each screen shows only what the account's roles allow, and the backend enforces the same rules.
+
+| Screen | Roles |
+|---|---|
+| Dashboard, Publishers, Source health | Any staff; changes need `SOURCE_MANAGER` |
+| Reports | `CONTENT_REVIEWER`; `ANALYST` sees counts on the dashboard |
+| Staff, Operations, Audit log | `SYSTEM_ADMIN` |
+
+The console is English only for now and always left-to-right. Every change asks for a reason, which is recorded in the review history and the audit log.
+
 ## Account deletion and backups
 
 - Deleted accounts are purged 7 days after the request (`DELETION_RECOVERY_PERIOD`).

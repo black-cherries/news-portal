@@ -92,6 +92,7 @@ Hibernate never changes the schema (`ddl-auto: validate`). Only Flyway does.
 - Create the first system administrator by setting `NEWSPORTAL_BOOTSTRAP_ADMIN_EMAIL` and `NEWSPORTAL_BOOTSTRAP_ADMIN_PASSWORD` (in `.env` or the environment) and starting the backend once. Then remove both variables.
 - Staff accounts can't be created through public registration.
 - Sessions are kept in server memory, so restarting the backend signs everyone out.
+- Readers can turn on daily or weekly email digests and breaking-news alerts under Settings. Both are off by default. Content reviewers choose breaking-news alerts in the staff console. See [docs/api.md](docs/api.md) for the rules and [docs/operations.md](docs/operations.md) for the settings.
 
 ## Staff console
 
@@ -101,6 +102,7 @@ Staff accounts sign in normally, then open `/admin`. Each screen shows only what
 |---|---|
 | Dashboard, Publishers, Source health | Any staff; changes need `SOURCE_MANAGER` |
 | Reports | `CONTENT_REVIEWER`; `ANALYST` sees counts on the dashboard |
+| Alerts (breaking news) | `CONTENT_REVIEWER` |
 | Staff, Operations, Audit log | `SYSTEM_ADMIN` |
 
 The console is English only for now and always left-to-right. Every change asks for a reason, which is recorded in the review history and the audit log.

@@ -39,6 +39,10 @@ const BADGE_TONES: Record<string, 'good' | 'warn' | 'bad' | 'neutral'> = {
   DISABLED: 'neutral',
   RETIRED: 'neutral',
   OPEN: 'bad',
+  QUEUED: 'warn',
+  SENDING: 'warn',
+  SENT: 'good',
+  CANCELLED: 'neutral',
 }
 
 /** Status shown as a word plus colour (never colour alone). */

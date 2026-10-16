@@ -55,6 +55,25 @@ Recipients are set in `OPS_ALERT_RECIPIENTS` (comma-separated). If it's empty, a
 
 `GET /api/v1/admin/ops` shows open and recently resolved alerts, recent backups and restore tests, and free disk space. `POST /api/v1/admin/ops/check` runs the checks immediately. These endpoints are for system administrators only.
 
+## Digests and breaking-news alerts
+
+A job checks every minute for alerts whose hold has ended, then for digests that are due. Alerts go first.
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `NOTIFICATION_JOBS_ENABLED` | `true` | Turns the job off, for example on a second instance |
+| `ALERT_HOLD` | `PT2M` | Time to cancel an alert before it is sent |
+| `MAX_ALERTS_PER_READER_PER_DAY` | `3` | Alerts one reader can get in 24 hours |
+| `MAX_ALERTS_PER_DAY` | `6` | Alerts staff can create in 24 hours |
+
+How sending works:
+
+- **Recording:** each email is recorded in `notification_delivery` before it is handed to the mail server, so a crash or restart never sends it twice.
+- **Failures:** a failed send is recorded as `FAILED` and not retried. The log names the delivery ID but no address.
+- **Downtime:** if the backend was down, overdue digests go out on the next run and cover at most one period.
+- **Retention:** delivery records are deleted after 30 days.
+- **Development:** emails land in `.mail-outbox/`.
+
 ## Recovering from a backup
 
 1. **Stop the backend.**

@@ -25,6 +25,9 @@ newsportal:
     # Tests trigger the purge directly.
     purge-enabled: false
     deletion-ledger-file: target/test-deletion-ledger.txt
+  notifications:
+    # Tests run the senders directly.
+    jobs-enabled: false
   mail:
     mode: capture
     public-base-url: http://app.test

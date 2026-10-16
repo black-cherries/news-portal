@@ -51,6 +51,17 @@ export interface Preferences {
   historyPaused: boolean
 }
 
+export type DigestFrequency = 'OFF' | 'DAILY' | 'WEEKLY'
+
+/** Empty languages/topics mean "same as my feed settings". nextDigestAt is read-only. */
+export interface NotificationSettings {
+  digest: DigestFrequency
+  breakingAlerts: boolean
+  languages: string[]
+  topics: string[]
+  nextDigestAt: string | null
+}
+
 export interface SavedItem {
   savedAt: string
   article: ArticleSummary

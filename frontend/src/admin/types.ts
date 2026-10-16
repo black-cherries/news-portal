@@ -213,3 +213,32 @@ export interface StaffReportPage {
   size: number
   hasMore: boolean
 }
+
+export type AlertStatus = 'QUEUED' | 'SENDING' | 'SENT' | 'CANCELLED'
+
+/** A breaking-news alert chosen by a content reviewer (FR-065, FR-067). */
+export interface AlertView {
+  id: number
+  articleId: number | null
+  articleTitle: string | null
+  articleLanguage: string | null
+  sourceName: string | null
+  status: AlertStatus
+  reason: string
+  createdBy: string | null
+  createdAt: string
+  sendAfter: string
+  sentAt: string | null
+  recipientCount: number
+  skippedCount: number
+  cancelledBy: string | null
+  cancelledAt: string | null
+  cancelReason: string | null
+}
+
+export interface AlertPage {
+  items: AlertView[]
+  page: number
+  size: number
+  hasMore: boolean
+}

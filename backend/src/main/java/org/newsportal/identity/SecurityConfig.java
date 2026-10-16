@@ -78,7 +78,9 @@ public class SecurityConfig {
 						"/api/v1/auth/resend-verification", "/api/v1/auth/login", "/api/v1/auth/account/restore",
 						"/api/v1/auth/password-reset/request", "/api/v1/auth/password-reset/confirm",
 						// FR-070: guests may report problems too (rate-limited).
-						"/api/v1/reports")
+						"/api/v1/reports",
+						// The token in the email is the credential; it can only turn emails off.
+						"/api/v1/notifications/unsubscribe")
 				.permitAll()
 				.requestMatchers("/api/v1/admin/**").hasRole(STAFF)
 				// Reader-only features; staff accounts are kept separate (SRS §4.3).

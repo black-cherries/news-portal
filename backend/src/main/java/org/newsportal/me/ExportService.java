@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.newsportal.identity.AccountService;
+import org.newsportal.notify.NotificationService;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,16 @@ public class ExportService {
 
 	private final AccountService accounts;
 
+	private final NotificationService notifications;
+
 	private final Clock clock;
 
-	public ExportService(NamedParameterJdbcTemplate jdbc, MeService me, AccountService accounts, Clock clock) {
+	public ExportService(NamedParameterJdbcTemplate jdbc, MeService me, AccountService accounts,
+			NotificationService notifications, Clock clock) {
 		this.jdbc = jdbc;
 		this.me = me;
 		this.accounts = accounts;
+		this.notifications = notifications;
 		this.clock = clock;
 	}
 
@@ -52,6 +57,11 @@ public class ExportService {
 				""", p).entrySet().stream().collect(LinkedHashMap::new,
 				(m, e) -> m.put(e.getKey(), text(e.getValue())), Map::putAll));
 		out.put("preferences", me.preferences(userId));
+		out.put("notifications", notifications.settings(userId));
+		out.put("notificationEmails", rows("""
+				SELECT kind, outcome, item_count, created_at FROM notification_delivery
+				WHERE user_id = :uid ORDER BY created_at
+				""", p));
 		out.put("bookmarks", rows("""
 				SELECT a.title, a.canonical_url AS source_url, s.name AS publisher, b.created_at AS saved_at
 				FROM bookmark b JOIN article a ON a.id = b.article_id JOIN news_source s ON s.id = a.source_id

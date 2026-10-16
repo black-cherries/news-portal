@@ -35,6 +35,11 @@ export function AdminLayout() {
               <NavLink to="/admin/reports">Reports</NavLink>
             </li>
           )}
+          {has('CONTENT_REVIEWER') && (
+            <li>
+              <NavLink to="/admin/alerts">Alerts</NavLink>
+            </li>
+          )}
           {has('SYSTEM_ADMIN') && (
             <>
               <li>

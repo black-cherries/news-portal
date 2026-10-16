@@ -1,7 +1,7 @@
 import { useEffect, useId, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { ApiError, api } from '../api/client'
-import type { Preferences } from '../api/types'
+import type { DigestFrequency, NotificationSettings, Preferences } from '../api/types'
 import { useAuth } from '../auth/AuthProvider'
 import { errorKey } from '../hooks/useArticlePages'
 import { useI18n } from '../i18n/I18nProvider'
@@ -117,6 +117,106 @@ function PreferencesForm() {
         />
         <label htmlFor={ids.paused}>{t('settings.historyPaused')}</label>
       </div>
+      <button type="submit">{t('common.save')}</button>
+      <StatusLine status={status} />
+    </form>
+  )
+}
+
+const FREQUENCIES: DigestFrequency[] = ['OFF', 'DAILY', 'WEEKLY']
+
+const FREQUENCY_KEYS = { OFF: 'notify.off', DAILY: 'notify.daily', WEEKLY: 'notify.weekly' } as const
+
+/** FR-065..FR-068: everything off until the reader turns it on. */
+function NotificationsForm() {
+  const { t, categoryName, formatDateTime } = useI18n()
+  const ids = { digest: useId(), alerts: useId() }
+  const [settings, setSettings] = useState<NotificationSettings | null>(null)
+  const [categories, setCategories] = useState<string[]>([])
+  const [status, setStatus] = useState<Status>(null)
+
+  useEffect(() => {
+    api.get<NotificationSettings>('/me/notifications').then(setSettings, (err: unknown) =>
+      setStatus({ text: t(errorKey(err)), kind: 'error' }),
+    )
+    api.get<{ code: string }[]>('/categories').then((c) => setCategories(c.map((x) => x.code)), () => {})
+  }, [t])
+
+  if (!settings) return <StatusLine status={status} />
+
+  const toggle = (list: string[], value: string) =>
+    list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
+
+  const save = async (e: FormEvent) => {
+    e.preventDefault()
+    try {
+      setSettings(await api.put<NotificationSettings>('/me/notifications', settings))
+      setStatus({ text: t('settings.saved'), kind: 'info' })
+    } catch (err) {
+      setStatus({ text: t(errorKey(err)), kind: 'error' })
+    }
+  }
+
+  return (
+    <form onSubmit={save} className="stack">
+      <p className="hint">{t('notify.hint')}</p>
+      <div className="field">
+        <label htmlFor={ids.digest}>{t('notify.digest')}</label>
+        <select
+          id={ids.digest}
+          value={settings.digest}
+          onChange={(e) => setSettings({ ...settings, digest: e.target.value as DigestFrequency })}
+        >
+          {FREQUENCIES.map((f) => (
+            <option key={f} value={f}>
+              {t(FREQUENCY_KEYS[f])}
+            </option>
+          ))}
+        </select>
+        {settings.digest !== 'OFF' && settings.nextDigestAt && (
+          <p className="hint">{t('notify.next', { date: formatDateTime(settings.nextDigestAt) })}</p>
+        )}
+      </div>
+      <div className="check">
+        <input
+          id={ids.alerts}
+          type="checkbox"
+          checked={settings.breakingAlerts}
+          onChange={(e) => setSettings({ ...settings, breakingAlerts: e.target.checked })}
+        />
+        <label htmlFor={ids.alerts}>{t('notify.alerts')}</label>
+      </div>
+      <fieldset>
+        <legend>{t('notify.languages')}</legend>
+        <p className="hint">{t('notify.languagesHint')}</p>
+        {LANGUAGES.map((l) => (
+          <label key={l} className="check">
+            <input
+              type="checkbox"
+              checked={settings.languages.includes(l)}
+              onChange={() => setSettings({ ...settings, languages: toggle(settings.languages, l) })}
+            />
+            <span lang={l}>{LANGUAGE_NAMES[l]}</span>
+          </label>
+        ))}
+      </fieldset>
+      <fieldset>
+        <legend>{t('notify.topics')}</legend>
+        <p className="hint">{t('notify.topicsHint')}</p>
+        <div className="check-grid">
+          {categories.map((c) => (
+            <label key={c} className="check">
+              <input
+                type="checkbox"
+                checked={settings.topics.includes(c)}
+                onChange={() => setSettings({ ...settings, topics: toggle(settings.topics, c) })}
+              />
+              <span>{categoryName(c)}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <p className="hint">{t('notify.languageNote')}</p>
       <button type="submit">{t('common.save')}</button>
       <StatusLine status={status} />
     </form>
@@ -247,6 +347,10 @@ export function SettingsPage() {
       <section aria-labelledby="prefs-h">
         <h2 id="prefs-h">{t('settings.preferences')}</h2>
         <PreferencesForm />
+      </section>
+      <section aria-labelledby="notify-h">
+        <h2 id="notify-h">{t('notify.title')}</h2>
+        <NotificationsForm />
       </section>
       <section aria-labelledby="password-h">
         <h2 id="password-h">{t('settings.changePassword')}</h2>

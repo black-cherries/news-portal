@@ -66,6 +66,16 @@ newsportal:
     # FR-055: list of purged user ids kept outside the database. Store it
     # where database restores do not overwrite it, and include it in backups.
     deletion-ledger-file: ${DELETION_LEDGER_FILE:../data/deletion-ledger.txt}
+  notifications:
+    # Digests and breaking-news alerts (FR-065..FR-067).
+    jobs-enabled: ${NOTIFICATION_JOBS_ENABLED:true}
+    check-interval: PT1M
+    # Time to cancel a mistaken alert before it is sent.
+    alert-hold: ${ALERT_HOLD:PT2M}
+    max-alerts-per-reader-per-day: ${MAX_ALERTS_PER_READER_PER_DAY:3}
+    max-alerts-per-day: ${MAX_ALERTS_PER_DAY:6}
+    batch-size: 200
+    delivery-retention: P30D
   mail:
     # outbox = write emails to files (development only); smtp = real delivery via spring.mail.*
     mode: ${MAIL_MODE:outbox}

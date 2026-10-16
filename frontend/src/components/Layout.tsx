@@ -64,6 +64,9 @@ export function Layout({ children }: { children: ReactNode }) {
                     <NavLink to="/history">{t('nav.history')}</NavLink>
                   </li>
                   <li>
+                    <NavLink to="/reports">{t('report.mine')}</NavLink>
+                  </li>
+                  <li>
                     <NavLink to="/settings">{t('nav.settings')}</NavLink>
                   </li>
                 </>
@@ -108,6 +111,9 @@ export function Layout({ children }: { children: ReactNode }) {
       <main id="main" ref={mainRef}>
         {children}
       </main>
+      <footer className="site-footer">
+        <NavLink to="/report">{t('report.title')}</NavLink>
+      </footer>
     </>
   )
 }

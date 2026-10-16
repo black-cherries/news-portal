@@ -78,6 +78,20 @@ During the recovery period (`DELETION_RECOVERY_PERIOD`, 7 days by default), sign
 
 After the period, an hourly job deletes the account and everything it owns. Articles belong to publishers and are not affected. Each purged user id is recorded in the database and in a file outside it (`DELETION_LEDGER_FILE`). At startup, any recorded id that has reappeared, for example after restoring an older backup, is purged again.
 
+## Reports and correction requests (FR-070 to FR-073)
+
+| Endpoint | Who | Body | Notes |
+|---|---|---|---|
+| `POST /reports` | Anyone, guests included | `{type, articleId?, description, pageUrl?, notifyMe?}` | `201 {reference, status}`. Optional `X-UI-Language` header. At most 10 per hour per address, and 20 per day per reader. |
+| `GET /me/reports` | Reader | | Own reports with public updates only. Internal staff notes are never included. |
+| `PUT /me/reports/{reference}/notify` | Reader | `{notifyMe}` | Turns status-change emails for that report on or off |
+
+- **Types:** `TECHNICAL`, `BROKEN_LINK`, `LANGUAGE_ERROR`, `TRANSLATION_ISSUE`, `MISSING_ATTRIBUTION`, `SUSPECTED_DUPLICATE`, `MISLEADING_WORDING`, `CORRECTION_REQUEST`.
+- **Statuses:** `RECEIVED`, `UNDER_REVIEW`, `RESOLVED`.
+- **Fields:** `description` is 10 to 2000 characters. `articleId` must be a visible article. `pageUrl` is an http(s) URL or an app path.
+- **References:** random, for example `NP-7K3QX9M2`. A report can only be viewed by its signed-in reporter, never through a public link (FR-072).
+- **Content:** reports never change an article automatically (FR-073).
+
 ## Staff API (`/admin`)
 
 Requires a signed-in staff account. Any staff role can read. Only `SOURCE_MANAGER` can change publishers, rights and feeds. Only `SYSTEM_ADMIN` can manage staff and read the audit log.
@@ -130,6 +144,18 @@ Health rules:
 | `POST /admin/staff/{id}/disable` | | Ends the person's sessions immediately |
 | `POST /admin/staff/{id}/enable` | | |
 | `GET /admin/audit?limit=50&before={id}` | | Newest first |
+
+### Reports (CONTENT_REVIEWER; counts also for ANALYST)
+
+| Endpoint | Body | Notes |
+|---|---|---|
+| `GET /admin/reports?status&type&mine&page&size` | | Newest first. Reporters appear only as `READER` or `GUEST_OR_DELETED`, never by identity. |
+| `GET /admin/reports/{id}` | | Includes the full history, with internal notes |
+| `POST /admin/reports/{id}/assign` | `{assigneeId?}` | Assigns to an active content reviewer; with no ID, to yourself |
+| `POST /admin/reports/{id}/status` | `{status, resolution?, publicNote?, internalNote?}` | Moves to `UNDER_REVIEW` or `RESOLVED`; resolving needs a `resolution` (`FIXED`, `PUBLISHER_NOTIFIED`, `NO_ACTION_NEEDED`, `DUPLICATE_REPORT`, `NOT_REPRODUCIBLE`). Emails the reporter with the public note if they asked for updates. |
+| `GET /admin/reports/stats` | | Counts by status and type, plus open reports older than 7 days. Analysts can use this one. |
+
+All changes are written to the audit log. When a reporter's account is purged, the report remains, without the link to them (FR-054).
 
 ### Operations (SYSTEM_ADMIN)
 

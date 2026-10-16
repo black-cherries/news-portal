@@ -8,6 +8,7 @@ import { ForgotPasswordPage, RegisterPage, ResetPasswordPage, SignInPage, Verify
 import { ForYouPage } from './pages/ForYouPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { LatestPage } from './pages/LatestPage'
+import { MyReportsPage, ReportPage } from './pages/ReportPages'
 import { CollectionPage, SavedPage } from './pages/SavedPages'
 import { SettingsPage } from './pages/SettingsPage'
 
@@ -46,6 +47,8 @@ export default function App() {
         <Route path="/saved/collections/:id" element={<ReaderOnly><CollectionPage /></ReaderOnly>} />
         <Route path="/history" element={<ReaderOnly><HistoryPage /></ReaderOnly>} />
         <Route path="/settings" element={<ReaderOnly><SettingsPage /></ReaderOnly>} />
+        <Route path="/report" element={<ReportPage />} />
+        <Route path="/reports" element={<ReaderOnly><MyReportsPage /></ReaderOnly>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>

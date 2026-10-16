@@ -76,7 +76,9 @@ public class SecurityConfig {
 				.permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/verify-email",
 						"/api/v1/auth/resend-verification", "/api/v1/auth/login", "/api/v1/auth/account/restore",
-						"/api/v1/auth/password-reset/request", "/api/v1/auth/password-reset/confirm")
+						"/api/v1/auth/password-reset/request", "/api/v1/auth/password-reset/confirm",
+						// FR-070: guests may report problems too (rate-limited).
+						"/api/v1/reports")
 				.permitAll()
 				.requestMatchers("/api/v1/admin/**").hasRole(STAFF)
 				// Reader-only features; staff accounts are kept separate (SRS §4.3).

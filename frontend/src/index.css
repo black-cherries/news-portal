@@ -395,6 +395,34 @@ fieldset {
   max-width: 42rem;
 }
 
+textarea {
+  font: inherit;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.report-box {
+  margin-block: 2rem 1rem;
+  border-block-start: 1px solid var(--border);
+  padding-block-start: 1rem;
+}
+
+.report-box summary {
+  cursor: pointer;
+  color: var(--accent);
+}
+
+.site-footer {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: 1rem;
+  border-block-start: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;

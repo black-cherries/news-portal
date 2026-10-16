@@ -103,6 +103,17 @@ public class AccountMailer implements DisposableBean {
 				""");
 	}
 
+	/** FR-072: a meaningful progress update. Only the status and the public note are included. */
+	public void sendReportUpdate(String to, String reference, String status, String publicNote) {
+		String note = (publicNote == null) ? "" : "\nMessage from the News Portal team:\n" + publicNote + "\n";
+		send(to, "Your report " + reference + " is now: " + status, """
+				Your report %s is now: %s.
+				%s
+				You can follow your reports after signing in at %s/reports.
+				To stop these emails, turn off updates for this report there.
+				""".formatted(reference, status, note, baseUrl));
+	}
+
 	public void sendPasswordChanged(String to) {
 		send(to, "Your password was changed", """
 				The password for your News Portal account was just changed, and you were signed out everywhere.

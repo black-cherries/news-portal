@@ -9,6 +9,18 @@ spring:
     clean-disabled: false
 
 newsportal:
+  ops:
+    pg-bin-dir: ${PG_BIN_DIR:}
+    backup:
+      # Tests trigger backups and checks directly.
+      schedule-enabled: false
+      dir: target/test-backups
+    restore-test:
+      schedule-enabled: false
+      db-url: ${TEST_RESTORE_DB_URL:}
+    monitor:
+      enabled: false
+      alert-recipients: ops-alerts@example.org
   privacy:
     # Tests trigger the purge directly.
     purge-enabled: false

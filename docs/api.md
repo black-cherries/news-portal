@@ -131,6 +131,17 @@ Health rules:
 | `POST /admin/staff/{id}/enable` | | |
 | `GET /admin/audit?limit=50&before={id}` | | Newest first |
 
+### Operations (SYSTEM_ADMIN)
+
+See [operations.md](operations.md) for how backups, restore tests and alerts work.
+
+| Endpoint | Notes |
+|---|---|
+| `GET /admin/ops` | Open and recently resolved alerts, recent backups and restore tests, backup folder and free disk space |
+| `POST /admin/ops/backup` | Runs a backup now and returns `{kind, success, fileName, sizeBytes, detail}` |
+| `POST /admin/ops/restore-test` | Restores the newest backup into the scratch database and verifies it |
+| `POST /admin/ops/check` | Runs the monitoring checks now and returns the current problems, keyed by alert key |
+
 Roles are `SYSTEM_ADMIN`, `SOURCE_MANAGER`, `CONTENT_REVIEWER` and `ANALYST`. Administrators can't remove their own `SYSTEM_ADMIN` role or disable themselves, and the last active `SYSTEM_ADMIN` can't be removed or disabled.
 
 ## GET /health

@@ -103,8 +103,14 @@ class AdminApiTest {
 		mvc.perform(get("/api/v1/admin/staff").session(manager)).andExpect(status().isForbidden());
 		mvc.perform(get("/api/v1/admin/audit").session(manager)).andExpect(status().isForbidden());
 
+		mvc.perform(get("/api/v1/admin/ops").session(manager)).andExpect(status().isForbidden());
+		send(post("/api/v1/admin/ops/backup"), manager, "").andExpect(status().isForbidden());
+
 		MockHttpSession admin = staff("SYSTEM_ADMIN");
 		mvc.perform(get("/api/v1/admin/staff").session(admin)).andExpect(status().isOk());
+		mvc.perform(get("/api/v1/admin/ops").session(admin)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.backupDir").exists())
+			.andExpect(jsonPath("$.openAlerts").isArray());
 		mvc.perform(get("/api/v1/admin/audit").session(admin)).andExpect(status().isOk())
 			.andExpect(jsonPath("$[*].action", hasItem("STAFF_SIGN_IN")));
 	}

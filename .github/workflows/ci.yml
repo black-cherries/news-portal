@@ -39,6 +39,9 @@ jobs:
       TEST_DB_URL: jdbc:postgresql://127.0.0.1:5432/newsportal_test
       TEST_DB_USERNAME: newsportal_test
       TEST_DB_PASSWORD: ci-only-not-a-secret
+      TEST_RESTORE_DB_URL: jdbc:postgresql://127.0.0.1:5432/newsportal_test_restore
+      # pg_dump must be the same major version as the server.
+      PG_BIN_DIR: /usr/lib/postgresql/17/bin
     defaults:
       run:
         working-directory: backend
@@ -49,6 +52,25 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
+      - name: Install PostgreSQL 17 client tools
+        run: |
+          if [ ! -x "$PG_BIN_DIR/pg_dump" ]; then
+            if ! grep -rqs "apt.postgresql.org" /etc/apt/sources.list /etc/apt/sources.list.d/; then
+              sudo install -d /usr/share/postgresql-common/pgdg
+              sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+                https://www.postgresql.org/media/keys/ACCC4CF8.asc
+              . /etc/os-release
+              echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" \
+                | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+            fi
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq postgresql-client-17
+          fi
+          "$PG_BIN_DIR/pg_dump" --version
+      - name: Create restore-test database
+        run: psql -h 127.0.0.1 -U newsportal_test -d newsportal_test -c "CREATE DATABASE newsportal_test_restore"
+        env:
+          PGPASSWORD: ci-only-not-a-secret
       - name: Run tests
         run: ./mvnw -B test
       - name: Keep test reports

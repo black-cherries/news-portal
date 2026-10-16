@@ -23,6 +23,7 @@ function article(overrides: Partial<ArticleDetail> = {}): ArticleDetail {
     fullTextStatus: 'NOT_PERMITTED',
     fullTextHtml: null,
     fullTextNarrationPermitted: false,
+    videos: [],
     ...overrides,
   }
 }

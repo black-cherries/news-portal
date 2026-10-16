@@ -5,6 +5,7 @@ import type { ArticleDetail } from '../api/types'
 import { useAuth } from '../auth/AuthProvider'
 import { DownloadButton } from '../components/DownloadButton'
 import { ListenButton } from '../components/ListenButton'
+import { VideoList } from '../components/VideoList'
 import { isUsable, removeDownload } from '../offline/downloads'
 import { offlineStore, type OfflineArticle } from '../offline/store'
 import { ReportForm } from '../components/ReportForm'
@@ -166,6 +167,8 @@ export function ArticlePage() {
           </a>
         </p>
       )}
+
+      <VideoList videos={article.videos ?? []} />
 
       {!offline && (
         <details className="report-box">

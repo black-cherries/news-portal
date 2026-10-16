@@ -274,8 +274,17 @@ Returns the same fields as a list item, plus:
 | `fullTextStatus` | `AVAILABLE`, `NOT_PERMITTED` or `NOT_PROVIDED` (FR-018, FR-019) |
 | `fullTextHtml` | Sanitized HTML, present only when `fullTextStatus` is `AVAILABLE` |
 | `fullTextNarrationPermitted` | `true` when text-to-speech may read the full text. When `false`, only the title and excerpt may be read aloud (FR-059). |
+| `videos` | `[{sourceUrl, provider, embedUrl, mimeType}]`, in feed order. Empty when the feed names no video. |
 
 When full text isn't available, clients show the excerpt and link to `sourceUrl`.
+
+### Videos (FR-056, FR-057)
+
+- **Sources:** ingestion takes up to 5 video links per entry from enclosures, Media RSS (`media:content`, `media:group`, `media:player`) and entry links that are YouTube or Vimeo pages. Only the link is stored.
+- **provider:** `YOUTUBE`, `VIMEO`, `FILE` (an MP4, WebM or Ogg file over HTTPS) or `LINK` (anything else).
+- **embedUrl:** set only when the publisher's `VIDEO_EMBED` permission is valid right now and the provider is known. YouTube uses the `youtube-nocookie.com` player, and Vimeo uses `dnt=1`. Otherwise `embedUrl` is `null` and clients link to `sourceUrl`.
+- **Loading:** the web app loads an embed only after the reader presses Play, and says first which site the video comes from. Iframes are sandboxed.
+- **Offline copies:** keep video links only.
 
 ## GET /categories
 

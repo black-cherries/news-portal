@@ -86,6 +86,12 @@ Hibernate never changes the schema (`ddl-auto: validate`). Only Flyway does.
 - Article text always carries its own `lang` and `dir`, so mixed-language pages render correctly.
 - The Urdu Nastaliq font is self-hosted, so no third-party font requests are made.
 
+## Videos
+
+- Videos named in a publisher's feed are shown under the article.
+- They are embedded only when the publisher's `VIDEO_EMBED` permission is valid and the host is YouTube, Vimeo or a direct HTTPS video file. Otherwise the app links to the original.
+- Nothing loads from the video host until the reader presses Play (FR-057).
+
 ## Installable app and offline reading
 
 - **Install:** the production build is an installable PWA (`public/manifest.webmanifest`, `public/sw.js`). Browsers allow install and service workers only over HTTPS or on `localhost`. The service worker is registered only in production builds.

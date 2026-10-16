@@ -12,6 +12,7 @@ import org.newsportal.reader.ReaderDtos.ArticleSummary;
 import org.newsportal.reader.ReaderDtos.Category;
 import org.newsportal.reader.ReaderDtos.FullTextStatus;
 import org.newsportal.reader.ReaderDtos.Publisher;
+import org.newsportal.reader.ReaderDtos.Video;
 import org.newsportal.reader.ReaderRepository.DetailRow;
 import org.newsportal.reader.ReaderRepository.Row;
 import org.newsportal.source.ContentUse;
@@ -59,9 +60,12 @@ public class ReaderService {
 
 	private ArticleDetail withFullText(DetailRow row) {
 		ArticleDetail d = row.detail();
+		List<Video> videos = videos(row);
 		// FR-018: full text only when display is permitted right now.
 		if (!rights.check(row.sourceId(), ContentUse.FULL_TEXT_DISPLAY).allowed()) {
-			return d;
+			return new ArticleDetail(d.id(), d.title(), d.excerpt(), d.author(), d.publisher(), d.sourceUrl(),
+					d.language(), d.direction(), d.publishedAt(), d.publisherUpdatedAt(), d.ingestedAt(),
+					d.lastSeenAt(), d.categories(), d.publisherCategories(), d.fullTextStatus(), null, false, videos);
 		}
 		Optional<String> body = contents.findById(d.id()).map(ArticleContent::getBodyHtml);
 		FullTextStatus status = body.isPresent() ? FullTextStatus.AVAILABLE : FullTextStatus.NOT_PROVIDED;
@@ -69,7 +73,21 @@ public class ReaderService {
 		boolean narrate = body.isPresent() && rights.check(row.sourceId(), ContentUse.NARRATION).allowed();
 		return new ArticleDetail(d.id(), d.title(), d.excerpt(), d.author(), d.publisher(), d.sourceUrl(),
 				d.language(), d.direction(), d.publishedAt(), d.publisherUpdatedAt(), d.ingestedAt(), d.lastSeenAt(),
-				d.categories(), d.publisherCategories(), status, body.orElse(null), narrate);
+				d.categories(), d.publisherCategories(), status, body.orElse(null), narrate, videos);
+	}
+
+	/** FR-056: an embed only where VIDEO_EMBED is permitted right now; otherwise a link to the original. */
+	private List<Video> videos(DetailRow row) {
+		List<String[]> links = repository.findVideos(row.detail().id());
+		if (links.isEmpty()) {
+			return List.of();
+		}
+		boolean embed = rights.check(row.sourceId(), ContentUse.VIDEO_EMBED).allowed();
+		return links.stream().map(link -> {
+			VideoLinks.Recognized r = VideoLinks.recognize(link[0], link[1]);
+			String embedUrl = (embed && r.embedUrl() != null) ? r.embedUrl() : null;
+			return new Video(link[0], r.provider().name(), embedUrl, link[1]);
+		}).toList();
 	}
 
 	public List<Publisher> publishers() {

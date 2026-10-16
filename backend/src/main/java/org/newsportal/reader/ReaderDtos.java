@@ -40,7 +40,17 @@ public final class ReaderDtos {
 	public record ArticleDetail(long id, String title, String excerpt, String author, Publisher publisher,
 			String sourceUrl, String language, String direction, Instant publishedAt, Instant publisherUpdatedAt,
 			Instant ingestedAt, Instant lastSeenAt, List<String> categories, List<String> publisherCategories,
-			FullTextStatus fullTextStatus, String fullTextHtml, boolean fullTextNarrationPermitted) {
+			FullTextStatus fullTextStatus, String fullTextHtml, boolean fullTextNarrationPermitted,
+			List<Video> videos) {
+	}
+
+	/**
+	 * A video named by the publisher (FR-056). {@code embedUrl} is set only
+	 * when VIDEO_EMBED is permitted and the provider is known; otherwise the
+	 * app links to {@code sourceUrl}. The app loads an embed only after the
+	 * reader asks for it (FR-057).
+	 */
+	public record Video(String sourceUrl, String provider, String embedUrl, String mimeType) {
 	}
 
 	public record Category(String code) {

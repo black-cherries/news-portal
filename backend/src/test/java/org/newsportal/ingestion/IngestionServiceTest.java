@@ -105,6 +105,23 @@ class IngestionServiceTest {
 	}
 
 	@Test
+	void gzipCompressedFeedsAreRead() throws Exception {
+		// Some publishers (e.g. UN News) compress even when the client did not ask.
+		SourceFeed feed = activeFeed(false);
+		java.io.ByteArrayOutputStream zipped = new java.io.ByteArrayOutputStream();
+		try (java.util.zip.GZIPOutputStream gz = new java.util.zip.GZIPOutputStream(zipped)) {
+			gz.write(rss(item("z1", "https://pub.example/z1", "Compressed")).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+		}
+		server.respond("/feed", new Response(200,
+				Map.of("Content-Type", "application/rss+xml", "Content-Encoding", "gzip"), zipped.toByteArray()));
+
+		IngestionJob job = ingestion.runFeed(feed.getId());
+
+		assertThat(job.getOutcome()).isEqualTo(FeedOutcome.SUCCESS);
+		assertThat(job.getItemsCreated()).isEqualTo(1);
+	}
+
+	@Test
 	void entriesWithoutGuidAreMatchedByCanonicalUrl() {
 		SourceFeed feed = activeFeed(false);
 		server.respond("/feed", Response.ok(rss(item(null, "https://pub.example/story?id=5", "Story"))));

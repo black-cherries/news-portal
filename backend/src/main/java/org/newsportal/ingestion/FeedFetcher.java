@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.zip.GZIPInputStream;
 
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,7 @@ public class FeedFetcher {
 			.timeout(props.requestTimeout())
 			.header("User-Agent", props.userAgent())
 			.header("Accept", "application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8")
+			.header("Accept-Encoding", "gzip")
 			.GET();
 		if (etag != null) {
 			request.header("If-None-Match", etag);
@@ -77,7 +79,13 @@ public class FeedFetcher {
 			if (status < 200 || status >= 300) {
 				return FetchResult.failed(FeedOutcome.HTTP_ERROR, status, "HTTP " + status);
 			}
-			byte[] bytes = body.readNBytes(props.maxFeedBytes() + 1);
+			// Some servers compress even when not asked; the size limit applies after decompression.
+			boolean gzip = response.headers()
+				.firstValue("Content-Encoding")
+				.map(v -> v.strip().equalsIgnoreCase("gzip"))
+				.orElse(false);
+			InputStream content = gzip ? new GZIPInputStream(body) : body;
+			byte[] bytes = content.readNBytes(props.maxFeedBytes() + 1);
 			if (bytes.length > props.maxFeedBytes()) {
 				return FetchResult.failed(FeedOutcome.TOO_LARGE, status,
 						"Response exceeds " + props.maxFeedBytes() + " bytes");

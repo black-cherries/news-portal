@@ -11,6 +11,8 @@ interface I18n {
   setLang: (lang: Lang) => void
   t: (key: MessageKey, vars?: Record<string, string | number>) => string
   formatDateTime: (iso: string) => string
+  /** Storage sizes such as "1.2 MB", in the interface language. */
+  formatBytes: (bytes: number) => string
   categoryName: (code: string) => string
 }
 
@@ -62,6 +64,10 @@ export function I18nProvider({ children, initial }: { children: ReactNode; initi
       setLang,
       t,
       formatDateTime: (iso: string) => formatter.format(new Date(iso)),
+      formatBytes: (bytes: number) => {
+        const [unit, n] = bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', Math.max(bytes, 1) / 1e3]
+        return new Intl.NumberFormat(LOCALES[lang], { style: 'unit', unit, maximumFractionDigits: 1 }).format(n)
+      },
       categoryName: (code: string) => {
         const key = `category.${code}` as MessageKey
         return key in dict ? t(key) : code

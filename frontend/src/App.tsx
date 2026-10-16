@@ -12,6 +12,8 @@ import { Layout } from './components/Layout'
 import { useI18n } from './i18n/I18nProvider'
 import { ArticlePage } from './pages/ArticlePage'
 import { ForgotPasswordPage, RegisterPage, ResetPasswordPage, SignInPage, VerifyEmailPage } from './pages/AuthPages'
+import { useOfflineSync } from './offline/useOfflineSync'
+import { DownloadsPage } from './pages/DownloadsPage'
 import { ForYouPage } from './pages/ForYouPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { LatestPage } from './pages/LatestPage'
@@ -40,6 +42,7 @@ function NotFound() {
 }
 
 export default function App() {
+  useOfflineSync()
   return (
     <Layout>
       <Routes>
@@ -56,6 +59,7 @@ export default function App() {
         <Route path="/history" element={<ReaderOnly><HistoryPage /></ReaderOnly>} />
         <Route path="/settings" element={<ReaderOnly><SettingsPage /></ReaderOnly>} />
         <Route path="/unsubscribe" element={<UnsubscribePage />} />
+        <Route path="/downloads" element={<DownloadsPage />} />
         <Route path="/report" element={<ReportPage />} />
         <Route path="/reports" element={<ReaderOnly><MyReportsPage /></ReaderOnly>} />
         <Route path="/admin" element={<AdminLayout />}>

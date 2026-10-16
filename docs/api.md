@@ -248,6 +248,20 @@ The feed is ordered by publication time. Two exceptions:
 
 `publishedAt` and `publisherUpdatedAt` are what the publisher reported, and are `null` when unknown. `ingestedAt` is when this app first stored the article (FR-022). `nextCursor` is `null` on the last page.
 
+## GET /articles/offline-status?ids=1,2,3
+
+Tells a device what it may keep for offline reading (FR-061, FR-063, FR-064). Public, because guests can download too. At most 200 IDs.
+
+```json
+[{ "id": 1, "level": "FULL_TEXT", "validUntil": "2026-11-15T00:00:00Z" },
+ { "id": 2, "level": "METADATA",  "validUntil": "2026-11-24T12:00:00Z" },
+ { "id": 3, "level": "NONE",      "validUntil": null }]
+```
+
+- **Levels:** `FULL_TEXT` needs both `FULL_TEXT_DISPLAY` and `STORAGE`, plus stored text. `METADATA` means keep the title, excerpt and source link only. `NONE` means delete the download: the article isn't shown to readers or doesn't exist.
+- **validUntil:** the earliest expiry among the rights involved, and never more than 14 days ahead. The app hides a download after this time until it has checked again.
+- **What counts:** only rights and publisher status. A failing feed doesn't affect downloads (FR-064).
+
 ## GET /articles/{id}
 
 Returns the same fields as a list item, plus:
